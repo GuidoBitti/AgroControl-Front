@@ -20,7 +20,9 @@ centralizando el registro de todas las intervenciones técnicas y el consumo de 
 
 ### Modelo
 <img width="817" height="1074" alt="Modelo_AgroControl drawio" src="https://github.com/user-attachments/assets/3a620bac-63e7-40b7-8f76-de66182adfa2" />
-[Link Imagen](https://drive.google.com/file/d/1E5pnDAzI1D0h6VOgaoaNEFibqgxNcMvc/view?usp=sharing)
+
+* [Link Imagen](https://drive.google.com/file/d/1E5pnDAzI1D0h6VOgaoaNEFibqgxNcMvc/view?usp=sharing)
+
 
 
 ## Alcance Funcional 
