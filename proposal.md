@@ -32,7 +32,7 @@ Regularidad:
 |:-|:-|
 |CRUD simple|1. CRUD Cultivo<br>2. CRUD Insumos<br>3. CRUD Campaña <br>4. CRUD Rol <br>5. CRUD Usuario <br>6. Trabajo|
 |CRUD dependiente|1. CRUD Lote {depende de} CRUD Cultivo<br>2. CRUD Organizacion {depende de} CRUD Rol y CRUD Usuario|
-|Listado<br>+<br>detalle| 1. Listado de trabajos e insumos por lote. Muestra cultivo, tipo de trabajo, fecha del trabajo, identificador, cantidad de insumos utilizados  => Detalle CRUD Lote<br> 2. Listado de Stock de Insumos. Muestra tipo de insumo, fecha, costo y cantidad de ingreso y egreso de insumos y total por insumo => Detalle CRUD Campaña|
+|Listado<br>+<br>detalle| 1. Listado de trabajos. Muestra cultivo, tipo de trabajo, fecha del trabajo, identificador, cantidad de insumos utilizados  => Detalle CRUD Lote<br> 2. Listado de Stock de Insumos. Muestra tipo de insumo, fecha, costo y cantidad de ingreso y egreso de insumos y total por insumo => Detalle CRUD Campaña|
 |CUU/Epic|1. Realizar el trabajo realizado en un lote. <br>2. Registrar el ingreso y egreso de stock de insumos|
 
 
@@ -42,3 +42,10 @@ Adicionales para Aprobación
 |CRUD simple|1. CRUD Cultivo<br>2. CRUD Insumos<br>3. CRUD Campaña <br>4. CRUD Rol <br>5. CRUD Usuario <br>6. Trabajo <br>7.Lote <br>8.Organizacion|
 |CUU/Epic|1. Realizar el trabajo realizado en un lote. <br>2. Consultar el historial de la Campaña <br>3. Registrar el ingreso y egreso de stock de insumos|
 
+### Alcance Adicional Voluntario
+
+|Req|Detalle|
+|:-|:-|
+|Listados |1. Filtrar el listado de insumos por tipo de trabajo y tipo de insumo <br>2. Filtrar el historial de campaña por tipo de cultivo.|
+|CUU/Epic|1. Agregar usuarios a la organiacion|
+|Otros|1. Envío de stock bajo por mail|
