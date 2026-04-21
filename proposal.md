@@ -20,9 +20,8 @@ centralizando el registro de todas las intervenciones técnicas y el consumo de 
 
 ### Modelo
 <img width="817" height="1074" alt="Modelo_AgroControl drawio" src="https://github.com/user-attachments/assets/3a620bac-63e7-40b7-8f76-de66182adfa2" />
+[Link Imagen](https://drive.google.com/file/d/1E5pnDAzI1D0h6VOgaoaNEFibqgxNcMvc/view?usp=sharing)
 
-
-*Nota*: incluir un link con la imagen de un modelo, puede ser modelo de dominio, diagrama de clases, DER. Si lo prefieren pueden utilizar diagramas con [Mermaid](https://mermaid.js.org) en lugar de imágenes.
 
 ## Alcance Funcional 
 
@@ -31,7 +30,7 @@ centralizando el registro de todas las intervenciones técnicas y el consumo de 
 Regularidad:
 |Req|Detalle|
 |:-|:-|
-|CRUD simple|1. CRUD Cultivo<br>2. CRUD Insumos<br>3. CRUD Campaña <br>4. CRUD Rol <br>5. CRUD Usuario <br>6. Trabajo|
+|CRUD simple|1. CRUD Cultivo<br>2. CRUD Insumos<br>3. CRUD Campaña <br>4. CRUD Rol <br>5. CRUD Usuario <br>6. CRUD Trabajo|
 |CRUD dependiente|1. CRUD Lote {depende de} CRUD Cultivo<br>2. CRUD Organizacion {depende de} CRUD Rol y CRUD Usuario|
 |Listado<br>+<br>detalle| 1. Listado de trabajos. Muestra cultivo, tipo de trabajo, fecha del trabajo, identificador, cantidad de insumos utilizados  => Detalle CRUD Lote<br> 2. Listado de Stock de Insumos. Muestra tipo de insumo, fecha, costo y cantidad de ingreso y egreso de insumos y total por insumo => Detalle CRUD Campaña|
 |CUU/Epic|1. Realizar el trabajo realizado en un lote. <br>2. Registrar el ingreso y egreso de stock de insumos|
@@ -40,7 +39,7 @@ Regularidad:
 Adicionales para Aprobación
 |Req|Detalle|
 |:-|:-|
-|CRUD simple|1. CRUD Cultivo<br>2. CRUD Insumos<br>3. CRUD Campaña <br>4. CRUD Rol <br>5. CRUD Usuario <br>6. Trabajo <br>7.Lote <br>8.Organizacion|
+|CRUD simple|1. CRUD Cultivo<br>2. CRUD Insumos<br>3. CRUD Campaña <br>4. CRUD Rol <br>5. CRUD Usuario <br>6. CRUD Trabajo <br>7. CRUD Lote <br>8. CRUD Organizacion|
 |CUU/Epic|1. Realizar el trabajo realizado en un lote. <br>2. Consultar el historial de la Campaña <br>3. Registrar el ingreso y egreso de stock de insumos|
 
 ### Alcance Adicional Voluntario
