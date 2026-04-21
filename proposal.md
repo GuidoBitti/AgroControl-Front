@@ -19,7 +19,8 @@ centralizando el registro de todas las intervenciones técnicas y el consumo de 
 (fertilizantes, insecticidas, herbicidas, etc).
 
 ### Modelo
-![imagen del modelo]()
+<img width="817" height="1074" alt="Modelo_AgroControl drawio" src="https://github.com/user-attachments/assets/3a620bac-63e7-40b7-8f76-de66182adfa2" />
+
 
 *Nota*: incluir un link con la imagen de un modelo, puede ser modelo de dominio, diagrama de clases, DER. Si lo prefieren pueden utilizar diagramas con [Mermaid](https://mermaid.js.org) en lugar de imágenes.
 
