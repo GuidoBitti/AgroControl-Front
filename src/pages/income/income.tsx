@@ -45,7 +45,9 @@ function Income() {
           <p>
             ¿No tienes una cuenta? <Link to="/record">Regístrate aquí</Link>
           </p>
-          <button type="submit">Ingresar</button>
+          <button type="submit" className="button">
+            Ingresar
+          </button>
         </form>
       </div>
     </>

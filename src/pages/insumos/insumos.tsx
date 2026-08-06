@@ -88,8 +88,11 @@ function Insumos() {
                 value={descripcion}
                 onChange={(e) => setDescripcion(e.target.value)}
                 placeholder="Ingresa la descripción"
-              /><br></br>
-              <button type="submit">Guardar</button>
+              />
+              <br></br>
+              <button type="submit" className="button">
+                Guardar
+              </button>
             </div>
           </div>
         </form>

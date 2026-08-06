@@ -1,0 +1,17 @@
+body {
+  font-family: 'Google Sans', Arial, sans-serif;
+  min-height: 100vh;
+  background-image: url('/FondoAgroControl.png');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+}
+
+button {
+  background-color: #6df63b;
+  color: white;
+  border: none;
+  cursor: pointer;
+  font-family: inherit;
+}

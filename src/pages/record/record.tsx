@@ -113,7 +113,9 @@ function Record() {
               ¿Ya tienes una cuenta?{' '}
               <Link to="/income">Inicia sesión aquí</Link>
             </p>
-            <button type="submit">Registrar</button>
+            <button type="submit" className="button">
+              Registrar
+            </button>
           </div>
         </form>
       </div>
