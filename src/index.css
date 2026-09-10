@@ -1,3 +1,8 @@
+.title {
+  text-align: center;
+  font-family: Impact, sans-serif;
+}
+
 body {
   font-family: 'Google Sans', Arial, sans-serif;
   min-height: 100vh;
@@ -9,9 +14,37 @@ body {
 }
 
 button {
-  background-color: #6df63b;
+  background-color: #2b8809;
   color: white;
   border: none;
   cursor: pointer;
-  font-family: inherit;
+  font-family: 'Google Sans', Arial, sans-serif;
+  height: 40px;
+  width: 100px;
+  padding: 10px;
+}
+
+input {
+  flex: 1;
+  width: 100%;
+  padding: 5px;
+  border: 1px solid #fffbfb;
+  border-radius: 4px;
+}
+
+.container {
+  max-width: 500px;
+  margin: auto;
+  padding: 30px;
+  background-color: rgba(17, 255, 0, 0.177);
+  margin-top: 80px;
+}
+
+.padre {
+  display: flex;
+  flex-direction: column;
+  padding: 20px;
+  gap: 10px;
+  font-family: Arial, sans-serif;
+  align-items: flex-start;
 }

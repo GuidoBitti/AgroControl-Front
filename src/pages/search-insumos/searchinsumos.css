@@ -1,5 +1,4 @@
 
-
 .container {
   max-width: 500px;
   margin: auto;
@@ -15,15 +14,4 @@
   gap: 10px;
   font-family: Arial, sans-serif;
   align-items: flex-start;
-}
-
-.nombre,
-.codigo,
-.stock,
-.descripcion,
-.tipo {
-  display: flex;
-  flex-direction: column;
-  gap: 5px;
-  font-family: Arial, sans-serif;
 }
