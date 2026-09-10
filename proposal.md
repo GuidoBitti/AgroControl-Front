@@ -4,7 +4,7 @@
 ### Integrantes
 * 48937 - Bitti Guido
 * 51388 - Mora Joaquin
-* 52724 - Guiu Mariano
+
 
 ### Repositorios
 * [AgroControl-Front](https://github.com/GuidoBitti/AgroControl-Front)
