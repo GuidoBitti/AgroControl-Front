@@ -4,7 +4,7 @@ import Record from './pages/record/record';
 import Insumos from './pages/insumos/insumos';
 import SearchInsumos from './pages/search-insumos/searchinsumos';
 import SearchLote from './pages/search-lote/search-lote.tsx';
-import Lotes from './lotes/lotes.tsx';
+import Lotes from './pages/lotes/lotes.tsx';
 
 function App() {
   return (
