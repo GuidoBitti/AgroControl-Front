@@ -1,44 +1,37 @@
 import './insumos.css';
 import { useState } from 'react';
+import { createInsumo } from '../../api/insumos';
+import { Link } from 'react-router-dom';
 
 function Insumos() {
-  const [codigo, setCodigo] = useState(0);
   const [nombre, setNombre] = useState('');
   const [tipo, setTipo] = useState('');
   const [stock, setStock] = useState(0);
   const [descripcion, setDescripcion] = useState('');
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    console.log('Código:', codigo);
-    console.log('Nombre:', nombre);
-    console.log('Tipo:', tipo);
-    console.log('Stock:', stock);
-    console.log('Descripción:', descripcion);
+
+    try {
+      await createInsumo({ nombre, tipo, stock, descripcion });
+      alert('Insumo guardado correctamente');
+
+      setNombre('');
+      setTipo('');
+      setStock(0);
+      setDescripcion('');
+    } catch (error) {
+      console.error(error);
+      alert('No se pudo guardar el insumo');
+    }
   };
 
   return (
     <>
       <div className="container">
-        <h2 className="titulo">INGRESO INSUMOS</h2>
+        <h2 className="title">INGRESO INSUMOS</h2>
         <form onSubmit={handleSubmit}>
           <div className="padre">
-            <div className="codigo">
-              <label htmlFor="codigo">Código:</label>
-              <input
-                type="text"
-                inputMode="numeric"
-                pattern="[0-9]*"
-                id="codigo"
-                name="codigo"
-                value={codigo}
-                onChange={(e) =>
-                  setCodigo(e.target.value.at(0) ? parseInt(e.target.value) : 0)
-                }
-                placeholder="Ingresa el código"
-                required
-              />
-            </div>
             <div className="nombre">
               <label htmlFor="nombre">Nombre:</label>
               <input
@@ -64,7 +57,7 @@ function Insumos() {
               />
             </div>
             <div className="stock">
-              <label htmlFor="stock">Stock:</label>
+              <label htmlFor="stock">Stock (kg o litros):</label>
               <input
                 type="text"
                 inputMode="numeric"
@@ -95,6 +88,10 @@ function Insumos() {
           <button type="submit" className="button">
             Guardar
           </button>
+          <p>
+            ¿Desea eliminar un insumo? {''}
+            <Link to="/delete-insumos">Eliminar Insumo</Link>
+          </p>
         </form>
       </div>
     </>

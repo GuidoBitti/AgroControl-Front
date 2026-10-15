@@ -1,6 +1,7 @@
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useState } from 'react';
 import './record.css';
+import { createUsuario } from '../../api/usuario.ts';
 
 function Record() {
   const [nombre, setNombre] = useState('');
@@ -10,22 +11,36 @@ function Record() {
   const [telefono, setTelefono] = useState('');
   const [direccion, setDireccion] = useState('');
   const [nacimiento, setNacimiento] = useState('');
+  const [error, setError] = useState('');
+  const navigate = useNavigate();
+  const [rolId, setRolId] = useState(0);
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    console.log('Nombre:', nombre);
-    console.log('Apellido:', apellido);
-    console.log('Correo:', correo);
-    console.log('Contraseña:', contraseña);
-    console.log('Teléfono:', telefono);
-    console.log('Dirección:', direccion);
-    console.log('Fecha de Nacimiento:', nacimiento);
+    setError('');
+    try {
+      await createUsuario({
+        nombre,
+        apellido,
+        email: correo,
+        password: contraseña,
+        telefono: telefono,
+        direccion,
+        fechaNacimiento: nacimiento,
+        rolId: rolId,
+        organizacion: 1, // Asignar un valor predeterminado para la organización
+      });
+      navigate('/');
+    } catch (error) {
+      console.error(error);
+      setError('Error al registrar el usuario');
+    }
   };
 
   return (
     <>
       <div className="container">
-        <h2 className="titulo">REGISTRO USUARIO</h2>
+        <h2 className="title">REGISTRO USUARIO</h2>
         <form onSubmit={handleSubmit}>
           <div className="padre">
             <div className="nombre">
@@ -109,6 +124,20 @@ function Record() {
                 placeholder="Selecciona tu fecha de nacimiento"
               />
             </div>
+            <label htmlFor="rol">Rol:</label>
+            <select
+              value={rolId}
+              onChange={(e) => setRolId(Number(e.target.value))}
+              required
+            >
+              <option value={0} disabled>
+                Seleccioná un rol
+              </option>
+              <option value={1}>Administrador</option>
+              <option value={2}>Operario</option>
+              <option value={3}>Ingeniero</option>
+            </select>
+
             <p>
               ¿Ya tienes una cuenta? <Link to="/">Inicia sesión aquí</Link>
             </p>

@@ -1,51 +1,9 @@
-.titulo {
-  text-align: center;
-  font-family: Impact, sans-serif;
-}
-
-.container {
-  max-width: 500px;
-  margin: auto;
-  padding: 30px;
-  background-color: rgba(17, 255, 0, 0.44);
-  margin-top: 80px;
-}
-
-.padre {
-  display: flex;
-  flex-direction: column;
-  padding: 20px;
-  gap: 10px;
-  font-family: Arial, sans-serif;
-  align-items: flex-start;
-}
-
-.button {
-  width: 100%;
-  background-color: #1eff1a;
-  color: rgb(3, 8, 1);
-  padding: 12px;
-  border: none;
-  border-radius: 8px;
-  font-size: 16px;
-  cursor: pointer;
-}
-
-.button:hover {
-  background-color: #10fa07;
-}
 
 .email,
 .password {
   display: flex;
   flex-direction: column;
   gap: 5px;
-  font-family: Arial, sans-serif;
+  font-family: 'Segoe UI', Arial, sans-serif;
 }
 
-input {
-  padding: 5px;
-  border: 1px solid #fffbfb;
-  border-radius: 4px;
-  background-color: rgb(250, 252, 251);
-}
