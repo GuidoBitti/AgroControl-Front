@@ -2,9 +2,9 @@ const API_URL = import.meta.env.VITE_API_URL
 
 export type Cultivo = {
   id: number
+  nombre: string
   tipo: string
   descripcion: string
-  LoteCampañaId: number
 }
 
 export async function getCultivo(): Promise<Cultivo[]> {

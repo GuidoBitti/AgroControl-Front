@@ -1,3 +1,4 @@
+  
 const API_URL = import.meta.env.VITE_API_URL
 
 export type Usuario = {
@@ -10,7 +11,6 @@ export type Usuario = {
   fechaNacimiento: string
   direccion: string
   rolId: number
-  organizacion: number
 }
 
 export async function login(email: string, password: string): Promise<Usuario> {

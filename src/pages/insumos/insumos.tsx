@@ -85,14 +85,19 @@ function Insumos() {
             </div>
           </div>
           <br></br>
+          <p>
+            ¿Desea eliminar un insumo?
+            <Link to="/delete-insumos">Eliminar Insumo</Link>
+          </p>
           <button type="submit" className="button">
             Guardar
           </button>
-          <p>
-            ¿Desea eliminar un insumo? {''}
-            <Link to="/delete-insumos">Eliminar Insumo</Link>
-          </p>
         </form>
+        <div className="accion">
+          <Link to="/menu" className="button">
+            Volver
+          </Link>
+        </div>
       </div>
     </>
   );

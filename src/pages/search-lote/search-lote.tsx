@@ -19,7 +19,6 @@ function SearchLote() {
         insumos.filter(
           (i) =>
             i.id.toString().includes(texto) ||
-            i.nombre.toLowerCase().includes(texto) ||
             i.descripcion.toLowerCase().includes(texto) ||
             i.tipo.toLowerCase().includes(texto),
         ),
@@ -84,6 +83,11 @@ function SearchLote() {
             </table>
           </div>
         )}
+        <div className="accion">
+          <Link to="/menu" className="button">
+            Volver
+          </Link>
+        </div>
       </div>
     </div>
   );

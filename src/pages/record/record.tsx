@@ -28,7 +28,6 @@ function Record() {
         direccion,
         fechaNacimiento: nacimiento,
         rolId: rolId,
-        organizacion: 1, // Asignar un valor predeterminado para la organización
       });
       navigate('/');
     } catch (error) {

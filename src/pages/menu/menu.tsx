@@ -7,6 +7,12 @@ function Menu() {
       <div className="container">
         <h1 className="title">MENU</h1>
         <div className="padre">
+          <Link to="/campania" className="button">
+            Consultar campaña
+          </Link>
+          <Link to="/trabajo" className="button">
+            Asignar trabajo
+          </Link>
           <Link to="/insumos" className="button">
             Ingresar Insumos
           </Link>

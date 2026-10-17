@@ -1,10 +1,12 @@
+import type { Cultivo } from "./cultivo.ts"
+
 const API_URL = import.meta.env.VITE_API_URL
 
 export type Lote = {
   id: number
-  nombre: string
   tipo: string
   descripcion: string
+  Cultivo?: Cultivo
 }
 
 export async function getLote(): Promise<Lote[]> {

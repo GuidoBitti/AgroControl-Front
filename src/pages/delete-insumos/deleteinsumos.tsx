@@ -104,6 +104,11 @@ function DeleteInsumos() {
             </table>
           </div>
         )}
+        <div className="accion">
+          <Link to="/menu" className="button">
+            Volver
+          </Link>
+        </div>
       </div>
     </div>
   );
