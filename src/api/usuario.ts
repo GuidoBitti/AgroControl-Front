@@ -1,5 +1,4 @@
-import { fetchWithAuth } from './fetchWithAuth.ts';
-
+import { fetchWithAuth } from "./fetchWithAuth"
 const API_URL = import.meta.env.VITE_API_URL
 
 export type Usuario = {

@@ -1,4 +1,6 @@
 import { fetchWithAuth } from './fetchWithAuth.ts';
+import type { LoteCampania } from "./lote-campania.ts"
+import type { Usuario } from "./usuario.ts"
 
 const API_URL = import.meta.env.VITE_API_URL
 
@@ -7,8 +9,8 @@ export type Trabajo = {
   descripcion: string
   fechaInicio: string
   fechaFin: string
-  loteCampañaId: number
-  usuarioId: number
+  LoteCampania: number
+  Usuario: number
 }
 
 export async function getTrabajo(): Promise<Trabajo[]> {

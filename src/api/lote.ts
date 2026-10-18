@@ -1,15 +1,13 @@
 import { fetchWithAuth } from './fetchWithAuth.ts';
+import type { Cultivo } from "./cultivo.ts"
 
 const API_URL = import.meta.env.VITE_API_URL
 
 export type Lote = {
-  id: number;
-  numero: number;
-  tipo: string;
-  latitud: number;
-  longitud: number;
-  hectareas: number;
-  descripcion: string;
+  id: number
+  tipo: string
+  descripcion: string
+  Cultivo?: Cultivo
 }
 export async function getLote(): Promise<Lote[]> {
   const res = await fetchWithAuth(`${API_URL}/lotes`)

@@ -54,6 +54,11 @@ function SearchInsumos() {
             </button>
           </div>
         </form>
+        <div className="accion">
+          <Link to="/menu" className="button">
+            Volver
+          </Link>
+        </div>
 
         {buscado && (
           <div className="results">

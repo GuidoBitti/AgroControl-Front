@@ -1,0 +1,10 @@
+.hectareas,
+.lat,
+.lng,
+.descripcion,
+.tipo {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  font-family: 'Segoe UI', Arial, sans-serif;
+}

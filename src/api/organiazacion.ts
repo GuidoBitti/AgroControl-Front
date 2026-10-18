@@ -1,4 +1,5 @@
 import { fetchWithAuth } from './fetchWithAuth.ts';
+import type { Usuario } from "./usuario.ts"
 
 const API_URL = import.meta.env.VITE_API_URL
 
@@ -6,7 +7,7 @@ export type Organizacion = {
   id: number
   razonSocial: string
   cuit: string
-  usuarioId: number
+  usuario: number
 }
 
 export async function getOrganizacion(): Promise<Organizacion[]> {

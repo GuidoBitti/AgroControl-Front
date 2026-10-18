@@ -8,6 +8,9 @@ import Lotes from './pages/lotes/lotes.tsx';
 import DeleteInsumos from './pages/delete-insumos/deleteinsumos.tsx';
 import Menu from './pages/menu/menu.tsx';
 import ProtectedRoute from './components/ProtectedRoute.tsx';
+import Campania from './pages/campania/campania.tsx';
+import CampaniaDetalle from './pages/campania/detalle-campania.tsx';
+import AsignarTrabajo from './pages/trabajo/trabajo.tsx';
 
 function App() {
   return (
@@ -21,6 +24,9 @@ function App() {
         <Route path="/search-lote" element={<ProtectedRoute><SearchLote /></ProtectedRoute>} />
         <Route path="/lotes" element={<ProtectedRoute><Lotes /></ProtectedRoute>} />
         <Route path="/delete-insumos" element={<ProtectedRoute><DeleteInsumos /></ProtectedRoute>} />
+        <Route path="/campania" element={<ProtectedRoute><Campania /></ProtectedRoute>} />
+        <Route path="/campania/:id" element={<ProtectedRoute><CampaniaDetalle /></ProtectedRoute>} />
+        <Route path="/trabajo" element={<ProtectedRoute><AsignarTrabajo /></ProtectedRoute>} />
       </Routes>
     </BrowserRouter>
   );
