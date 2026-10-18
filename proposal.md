@@ -32,10 +32,10 @@ centralizando el registro de todas las intervenciones técnicas y el consumo de 
 Regularidad:
 |Req|Detalle|
 |:-|:-|
-|CRUD simple|1. CRUD Cultivo<br>2. CRUD Insumos<br>3. CRUD Campaña <br>4. CRUD Rol <br>5. CRUD Usuario <br>6. CRUD Trabajo|
-|CRUD dependiente|1. CRUD Lote {depende de} CRUD Cultivo<br>2. CRUD Organizacion {depende de} CRUD Rol y CRUD Usuario|
-|Listado<br>+<br>detalle| 1. Listado de trabajos. Muestra cultivo, tipo de trabajo, fecha del trabajo, identificador, cantidad de insumos utilizados  => Detalle CRUD Lote<br> 2. Listado de Stock de Insumos. Muestra tipo de insumo, fecha, costo y cantidad de ingreso y egreso de insumos y total por insumo => Detalle CRUD Campaña|
-|CUU/Epic|1. Realizar el trabajo realizado en un lote. <br>2. Registrar el ingreso y egreso de stock de insumos|
+|CRUD simple|1. CRUD Cultivo<br>2. CRUD Insumo<br>3. CRUD Rol<br>4. CRUD Usuario<br>5. CRUD Lote|
+|CRUD dependiente|1. CRUD Usuario {depende de} CRUD Rol|
+|Listado<br>+<br>detalle|1. Listado de Lotes. Muestra identificador, tipo de cultivo, cantidad de hectáreas, latitud, longitud y descripción => Detalle CRUD Lote<br>2. Listado de Insumos. Muestra nombre, tipo, cantidad disponible, unidad de medida y descripción => Detalle CRUD Insumo|
+|CUU/Epic|1. Gestión de usuarios y roles. Permite registrar usuarios y asignarles un rol dentro del sistema.|
 
 
 Adicionales para Aprobación
