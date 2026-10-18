@@ -1,0 +1,9 @@
+
+.email,
+.password {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  font-family: 'Segoe UI', Arial, sans-serif;
+}
+

@@ -1,0 +1,26 @@
+.nombre,
+.apellido,
+.correo,
+.nacimiento,
+.contraseña,
+.telefono,
+.direccion,
+.rol {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  font-family: 'Segoe UI', Arial, sans-serif;
+}
+
+.field-error,
+.form-error {
+  color: #b42318;
+  font-size: 0.875rem;
+}
+
+select {
+  padding: 8px;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+  font-size: 1rem;
+}

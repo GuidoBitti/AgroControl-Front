@@ -1,0 +1,43 @@
+
+.results {
+  max-width: 700px;
+  margin: 0 auto 40px;
+  padding: 24px;
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+  box-sizing: border-box;
+  overflow-x: auto;
+}
+
+.resultados-titulo {
+  margin: 0 0 16px;
+  font-size: 1.2rem;
+  color: #2e7d32;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.95rem;
+}
+
+.table th {
+  padding: 12px 14px;
+  text-align: left;
+  color: #fff;
+  background: #2e7d32;
+}
+
+.table td {
+  padding: 12px 14px;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.table tbody tr:nth-child(even) {
+  background: #f5faf5;
+}
+
+.table tbody tr:hover {
+  background: #e8f5e9;
+}

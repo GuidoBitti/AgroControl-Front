@@ -1,0 +1,100 @@
+.title {
+  margin: 0 0 24px;
+  text-align: center;
+  font-family: 'Segoe UI', Arial, sans-serif;
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: #1b5e20;
+  text-shadow: none;
+  /* saca el efecto de borde */
+  -webkit-text-stroke: 0;
+}
+
+
+body {
+  background: linear-gradient(rgba(241, 248, 233, 0.10), rgba(241, 248, 233, 0.10)),
+    url('/FondoAgroControl.png') center / cover no-repeat fixed;
+}
+.padre input {
+  width: 100%;
+  padding: 12px 14px;
+  font-size: 1rem;
+  border: 1px solid #a5d6a7;
+  border-radius: 8px;
+  box-sizing: border-box;
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.padre input:focus {
+  border-color: #2e7d32;
+  box-shadow: 0 0 0 3px rgba(46, 125, 50, 0.2);
+}
+.accion {
+  display: flex;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.container p,
+.container a {
+  font-family: 'Segoe UI', Arial, sans-serif;
+}
+
+a {
+  color: #2e7d32;
+}
+
+a:visited {
+  color: #2e7d32;
+}
+a.button {
+  display: block;
+  text-align: center;
+  text-decoration: none;
+  color: #fff;
+  font-family: inherit;
+  font-weight: bold;
+  font-size: 1rem;
+  box-sizing: border-box;
+  font-family: 'Segoe UI', Arial, sans-serif;
+}
+
+.container button {
+  width: 100%;
+  margin-top: 16px;
+  padding: 12px;
+  font-size: 1rem;
+  font-weight: 600;
+  color: #fff;
+  background: #2e7d32;
+  /* verde sobrio en lugar del verde fosforescente */
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition:  0.2s;
+}
+
+.container button:hover {
+  background: #1b5e20;
+}
+
+.container {
+  max-width: 700px;
+  margin: 40px auto 32px;
+  /* el margen inferior separa las tarjetas */
+  padding: 32px;
+  background: rgba(255, 255, 255, 0.92);
+  border-radius: 16px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+  box-sizing: border-box;
+}
+
+.padre {
+  display: flex;
+  flex-direction: column;
+  padding: 20px;
+  gap: 10px;
+  font-family: Arial, sans-serif;
+  align-items: flex-start;
+}
