@@ -4,11 +4,18 @@
 .nacimiento,
 .contraseña,
 .telefono,
-.direccion {
+.direccion,
+.rol {
   display: flex;
   flex-direction: column;
   gap: 5px;
   font-family: 'Segoe UI', Arial, sans-serif;
+}
+
+.field-error,
+.form-error {
+  color: #b42318;
+  font-size: 0.875rem;
 }
 
 select {

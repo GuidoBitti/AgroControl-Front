@@ -2,13 +2,14 @@ import { Link } from 'react-router-dom';
 import { useState } from 'react';
 import './searchinsumos.css';
 import { getInsumo, type Insumo } from '../../api/insumos';
+import BackToMenu from '../../components/BackToMenu.js';
 
 function SearchInsumos() {
   const [nombre, setNombre] = useState('');
   const [resultados, setResultados] = useState<Insumo[]>([]);
   const [buscado, setBuscado] = useState(false);
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.SubmitEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     try {
@@ -34,6 +35,7 @@ function SearchInsumos() {
   return (
     <div className="Pagina">
       <div className="container">
+        <BackToMenu />
         <h1 className="title">Busqueda de Insumos</h1>
         <form onSubmit={handleSubmit}>
           <div className="padre">

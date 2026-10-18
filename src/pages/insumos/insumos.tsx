@@ -2,23 +2,29 @@ import './insumos.css';
 import { useState } from 'react';
 import { createInsumo } from '../../api/insumos';
 import { Link } from 'react-router-dom';
+import BackToMenu from '../../components/BackToMenu.js';
 
 function Insumos() {
   const [nombre, setNombre] = useState('');
   const [tipo, setTipo] = useState('');
-  const [stock, setStock] = useState(0);
+  const [stock, setStock] = useState('');
   const [descripcion, setDescripcion] = useState('');
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.SubmitEvent<HTMLFormElement>) => {
     e.preventDefault();
 
+    if (![nombre, tipo, stock, descripcion].every((value) => value.trim())) {
+      alert('Completá todos los campos.');
+      return;
+    }
+
     try {
-      await createInsumo({ nombre, tipo, stock, descripcion });
+      await createInsumo({ nombre, tipo, stock: Number(stock), descripcion });
       alert('Insumo guardado correctamente');
 
       setNombre('');
       setTipo('');
-      setStock(0);
+      setStock('');
       setDescripcion('');
     } catch (error) {
       console.error(error);
@@ -29,6 +35,7 @@ function Insumos() {
   return (
     <>
       <div className="container">
+        <BackToMenu />
         <h2 className="title">INGRESO INSUMOS</h2>
         <form onSubmit={handleSubmit}>
           <div className="padre">
@@ -65,9 +72,7 @@ function Insumos() {
                 id="stock"
                 name="stock"
                 value={stock}
-                onChange={(e) =>
-                  setStock(e.target.value ? parseInt(e.target.value) : 0)
-                }
+                onChange={(e) => setStock(e.target.value)}
                 placeholder="Ingresa el stock"
                 required
               />
@@ -81,6 +86,7 @@ function Insumos() {
                 value={descripcion}
                 onChange={(e) => setDescripcion(e.target.value)}
                 placeholder="Ingresa la descripción"
+                required
               />
             </div>
           </div>

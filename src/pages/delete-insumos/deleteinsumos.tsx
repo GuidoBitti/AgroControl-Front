@@ -2,13 +2,14 @@ import { useState } from 'react';
 import './deleteinsumos.css';
 import { deleteInsumo, getInsumo, type Insumo } from '../../api/insumos';
 import { Link } from 'react-router-dom';
+import BackToMenu from '../../components/BackToMenu.js';
 
 function DeleteInsumos() {
   const [nombre, setNombre] = useState('');
   const [resultados, setResultados] = useState<Insumo[]>([]);
   const [buscado, setBuscado] = useState(false);
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.SubmitEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     try {
@@ -45,6 +46,7 @@ function DeleteInsumos() {
   return (
     <div className="Pagina">
       <div className="container">
+        <BackToMenu />
         <h1 className="title">ELIMINAR INSUMOS</h1>
         <form onSubmit={handleSubmit}>
           <div className="padre">

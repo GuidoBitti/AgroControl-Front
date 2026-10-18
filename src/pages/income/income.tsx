@@ -1,4 +1,4 @@
-import { useState, type FormEvent } from 'react';
+import { useState, type InputEvent } from 'react';
 import './income.css';
 import { Link, useNavigate } from 'react-router-dom';
 import { login } from '../../api/usuario.ts';
@@ -8,12 +8,16 @@ function Income() {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const navigate = useNavigate();
-  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.SubmitEvent<HTMLFormElement>) => {
     e.preventDefault();
     setError('');
 
     try {
       await login(email.trim(), password);
+
+      const data = await login(email, password);
+
+      localStorage.setItem('token', data.token);
       navigate('/menu');
     } catch (err) {
       console.error(err);
