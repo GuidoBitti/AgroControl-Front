@@ -1,36 +1,47 @@
 import './trabajo.css';
-import { useEffect, useState, type FormEvent } from 'react';
-import { Link } from 'react-router-dom';
+import { useEffect, useState, type SubmitEvent } from 'react';
 import { createTrabajo } from '../../api/trabajo';
-import { getUsuario, type Usuario } from '../../api/usuario';
-import { getLoteCampania, type LoteCampania } from '../../api/lote-campania';
+import { getLote, type Lote } from '../../api/lote.ts';
+import BackToMenu from '../../components/BackToMenu.js';
 
 function AsignarTrabajo() {
   const [descripcion, setDescripcion] = useState('');
   const [fechaInicio, setFechaInicio] = useState('');
   const [fechaFin, setFechaFin] = useState('');
-  const [loteCampaniaId, setLoteCampaniaId] = useState(0);
-  const [usuarioId, setUsuarioId] = useState(0);
-
-  const [usuarios, setUsuarios] = useState<Usuario[]>([]);
-  const [loteCampanias, setLoteCampanias] = useState<LoteCampania[]>([]);
+  const [loteId, setLoteId] = useState('');
+  const [usuarioId] = useState(() => Number(localStorage.getItem('userId')));
+  const [usuarioNombre] = useState(() => localStorage.getItem('userNombre') ?? '');
+  const [usuarioApellido] = useState(() => localStorage.getItem('userApellido') ?? '');
+  const [lotes, setLotes] = useState<Lote[]>([]);
   const [error, setError] = useState('');
 
   useEffect(() => {
-    Promise.all([getUsuario(), getLoteCampania()])
-      .then(([u, lc]) => {
-        setUsuarios(u);
-        setLoteCampanias(lc);
-      })
+    if (!usuarioId || !usuarioNombre || !usuarioApellido) {
+      setError('Iniciá sesión nuevamente para identificar al usuario.');
+      return;
+    }
+
+    getLote()
+      .then(setLotes)
       .catch((err) => {
         console.error(err);
         setError('No se pudieron cargar los datos del formulario');
       });
-  }, []);
+  }, [usuarioId, usuarioNombre, usuarioApellido]);
 
-  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: SubmitEvent<HTMLFormElement>) => {
     e.preventDefault();
     setError('');
+
+    if (!usuarioId || !usuarioNombre || !usuarioApellido) {
+      setError('Iniciá sesión nuevamente para identificar al usuario.');
+      return;
+    }
+
+    if (!loteId || !descripcion.trim() || !fechaInicio || !fechaFin) {
+      setError('Completá todos los campos.');
+      return;
+    }
 
     if (fechaFin < fechaInicio) {
       setError('La fecha de fin no puede ser anterior a la de inicio');
@@ -42,14 +53,13 @@ function AsignarTrabajo() {
         descripcion,
         fechaInicio,
         fechaFin,
-        LoteCampania: loteCampaniaId,
+        Lote: Number(loteId),
         Usuario: usuarioId,
       });
       setDescripcion('');
       setFechaInicio('');
       setFechaFin('');
-      setLoteCampaniaId(0);
-      setUsuarioId(0);
+      setLoteId('');
       alert('Trabajo asignado');
     } catch (err) {
       console.error(err);
@@ -60,6 +70,7 @@ function AsignarTrabajo() {
   return (
     <div className="Pagina">
       <div className="container">
+        <BackToMenu />
         <h2 className="title">ASIGNAR TRABAJO</h2>
         <form onSubmit={handleSubmit}>
           <div className="padre">
@@ -97,42 +108,27 @@ function AsignarTrabajo() {
             </div>
 
             <div className="loteCampania">
-              <label htmlFor="loteCampania">Lote de campaña:</label>
+              <label htmlFor="lote">Lote:</label>
               <select
-                id="loteCampania"
-                value={loteCampaniaId}
-                onChange={(e) => setLoteCampaniaId(Number(e.target.value))}
+                id="lote"
+                value={loteId}
+                onChange={(e) => setLoteId(e.target.value)}
                 required
               >
-                <option value={0} disabled>
-                  Seleccioná un lote de campaña
+                <option value="" disabled>
+                  Seleccioná un lote
                 </option>
-                {loteCampanias.map((lc) => (
-                  <option key={lc.id} value={lc.id}>
-                    {}
-                    Lote de campaña #{lc.id}
+                {lotes.map((lote) => (
+                  <option key={lote.id} value={lote.id}>
+                    Lote #{lote.id}: {lote.tipo} - {lote.descripcion}
                   </option>
                 ))}
               </select>
             </div>
 
             <div className="usuario">
-              <label htmlFor="usuario">Usuario:</label>
-              <select
-                id="usuario"
-                value={usuarioId}
-                onChange={(e) => setUsuarioId(Number(e.target.value))}
-                required
-              >
-                <option value={0} disabled>
-                  Seleccioná un usuario
-                </option>
-                {usuarios.map((u) => (
-                  <option key={u.id} value={u.id}>
-                    {u.nombre} {u.apellido}
-                  </option>
-                ))}
-              </select>
+              <span>Usuario autenticado:</span>
+              <p>{usuarioNombre && usuarioApellido ? `${usuarioNombre} ${usuarioApellido}` : 'No identificado'}</p>
             </div>
           </div>
           {error && <p className="error">{error}</p>}
@@ -140,11 +136,6 @@ function AsignarTrabajo() {
             Guardar
           </button>
         </form>
-        <div className="accion">
-          <Link to="/menu" className="button">
-            Volver
-          </Link>
-        </div>
       </div>
     </div>
   );

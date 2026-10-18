@@ -1,6 +1,7 @@
 import { useState, type FormEvent } from 'react';
 import { Link } from 'react-router-dom';
 import { getCampanias, type Campania } from '../../api/campania';
+import BackToMenu from '../../components/BackToMenu.js';
 
 function BuscarCampania() {
   const [id, setId] = useState('');
@@ -45,6 +46,7 @@ function BuscarCampania() {
   return (
     <div className="Pagina">
       <div className="container">
+        <BackToMenu />
         <h2 className="title">BUSCAR CAMPAÑAS</h2>
         <form onSubmit={handleSubmit}>
           <div className="padre">
@@ -118,11 +120,6 @@ function BuscarCampania() {
             </tbody>
           </table>
         )}
-        <div className="accion">
-          <Link to="/menu" className="button">
-            Volver
-          </Link>
-        </div>
       </div>
     </div>
   );

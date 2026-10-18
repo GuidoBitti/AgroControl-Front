@@ -99,11 +99,6 @@ function Insumos() {
             Guardar
           </button>
         </form>
-        <div className="accion">
-          <Link to="/menu" className="button">
-            Volver
-          </Link>
-        </div>
       </div>
     </>
   );

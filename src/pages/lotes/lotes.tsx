@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { createLote } from '../../api/lote.ts';
+import BackToMenu from '../../components/BackToMenu.js';
 import './lotes.css';
 
 function Lotes() {
@@ -36,11 +37,7 @@ function Lotes() {
   return (
     <div className="Pagina">
       <div className="container">
-        <div className="accion">
-          <Link to="/menu" className="button">
-            Volver
-          </Link>
-        </div>
+        <BackToMenu />
         <h2 className="title">INGRESO LOTES</h2>
         <form onSubmit={handleSubmit}>
           <div className="padre">

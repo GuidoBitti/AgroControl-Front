@@ -1,7 +1,7 @@
-import { useState, type InputEvent } from 'react';
+import { useState } from 'react';
 import './income.css';
 import { Link, useNavigate } from 'react-router-dom';
-import { login } from '../../api/usuario.ts';
+import { getUsuarioDesdeLogin, login } from '../../api/usuario.ts';
 
 function Income() {
   const [email, setEmail] = useState('');
@@ -13,14 +13,19 @@ function Income() {
     setError('');
 
     try {
-      await login(email.trim(), password);
-
-      const data = await login(email, password);
-
+      const data = await login(email.trim(), password);
       localStorage.setItem('token', data.token);
+      const usuario = await getUsuarioDesdeLogin(data, email.trim());
+      localStorage.setItem('userId', String(usuario.id));
+      localStorage.setItem('userNombre', usuario.nombre);
+      localStorage.setItem('userApellido', usuario.apellido);
       navigate('/menu');
     } catch (err) {
       console.error(err);
+      localStorage.removeItem('token');
+      localStorage.removeItem('userId');
+      localStorage.removeItem('userNombre');
+      localStorage.removeItem('userApellido');
       setError('Email o contraseña incorrectos');
     }
   };

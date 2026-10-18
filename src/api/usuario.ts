@@ -14,7 +14,23 @@ export type Usuario = {
   //organizacion: number
 }
 
-export async function login(email: string, password: string): Promise<Usuario> {
+type LoginUserFields = Partial<Pick<Usuario, 'id' | 'nombre' | 'apellido' | 'email'>>
+
+export type LoginResponse = {
+  token: string
+  id?: number
+  nombre?: string
+  apellido?: string
+  email?: string
+  usuario?: LoginUserFields
+  user?: LoginUserFields
+  data?: LoginUserFields & {
+    usuario?: LoginUserFields
+    user?: LoginUserFields
+  }
+}
+
+export async function login(email: string, password: string): Promise<LoginResponse> {
   const res = await fetch(`${API_URL}/usuarios/login`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
@@ -28,6 +44,27 @@ export async function getUsuario(): Promise<Usuario[]> {
   const res = await fetchWithAuth(`${API_URL}/usuarios`)
   if (!res.ok) throw new Error('Error al obtener usuarios')
   return res.json()
+}
+
+export async function getUsuarioDesdeLogin(
+  data: LoginResponse,
+  email: string,
+): Promise<Pick<Usuario, 'id' | 'nombre' | 'apellido'>> {
+  const user = data.usuario ?? data.user ?? data.data?.usuario ?? data.data?.user ?? data.data ?? data
+  const userEmail = user.email ?? data.email ?? email
+
+  if (user.id !== undefined && user.nombre && user.apellido) {
+    return {
+      id: user.id,
+      nombre: user.nombre.trim(),
+      apellido: user.apellido.trim(),
+    }
+  }
+
+  const usuarios = await getUsuario()
+  const usuario = usuarios.find((item) => item.email.toLowerCase() === userEmail.toLowerCase())
+  if (!usuario) throw new Error('No se encontraron los datos del usuario autenticado')
+  return usuario
 }
 
 export async function createUsuario(data: Omit<Usuario, 'id'>): Promise<Usuario> {

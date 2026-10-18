@@ -24,8 +24,8 @@ function App() {
         <Route path="/search-lote" element={<ProtectedRoute><SearchLote /></ProtectedRoute>} />
         <Route path="/lotes" element={<ProtectedRoute><Lotes /></ProtectedRoute>} />
         <Route path="/delete-insumos" element={<ProtectedRoute><DeleteInsumos /></ProtectedRoute>} />
-        <Route path="/campania" element={<ProtectedRoute><Campania /></ProtectedRoute>} />
-        <Route path="/campania/:id" element={<ProtectedRoute><CampaniaDetalle /></ProtectedRoute>} />
+        {/* <Route path="/campania" element={<ProtectedRoute><Campania /></ProtectedRoute>} />
+        <Route path="/campania/:id" element={<ProtectedRoute><CampaniaDetalle /></ProtectedRoute>} /> */}
         <Route path="/trabajo" element={<ProtectedRoute><AsignarTrabajo /></ProtectedRoute>} />
       </Routes>
     </BrowserRouter>
