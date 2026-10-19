@@ -62,7 +62,7 @@ function Income() {
             </div>
           </div>
           <p>
-            ¿No tienes una cuenta? <Link to="/record">Regístrate aquí</Link>
+            ¿No tienes organizacion? <Link to="/record">Regístrate aquí</Link>
           </p>
           {error && <p className="error">{error}</p>}
           <button type="submit" className="button">

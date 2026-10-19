@@ -1,23 +1,19 @@
 import { Link, useNavigate } from 'react-router-dom';
-import { useEffect,useState } from 'react';
+import { useState } from 'react';
 import './record.css';
-import { createUsuario } from '../../api/usuario.ts';
-import { fetchWithAuth } from '../../api/fetchWithAuth.ts';
-import type { Rol } from '../../api/rol.ts';
+import { createUsuario, type Usuario } from '../../api/usuario.ts';
+import { createOrganizacion } from '../../api/organiazacion.ts';
 import BackToMenu from '../../components/BackToMenu';
 
-const API_URL = import.meta.env.VITE_API_URL
 
-type FormField = 'nombre' | 'apellido' | 'correo' | 'contraseña' | 'telefono' | 'direccion' | 'nacimiento' | 'rolId';
+type FormField = 'razonSocial' | 'cuit' | 'nombre' | 'apellido' | 'correo' | 'contraseña' | 'telefono' | 'direccion' | 'nacimiento';
 
 const validateField = (field: FormField, value: string | number): string => {
-  if (field === 'rolId') {
-    return value === 0 ? 'Seleccioná un rol.' : '';
-  }
-
   const text = String(value).trim();
   if (!text) {
-    const labels: Record<Exclude<FormField, 'rolId'>, string> = {
+    const labels: Record<FormField, string> = {
+      razonSocial: 'La razón social es obligatoria.',
+      cuit: 'El CUIT es obligatorio.',
       nombre: 'El nombre es obligatorio.',
       apellido: 'El apellido es obligatorio.',
       correo: 'El correo es obligatorio.',
@@ -37,6 +33,8 @@ const validateField = (field: FormField, value: string | number): string => {
 };
 
 function Record() {
+  const [razonSocial, setRazonSocial] = useState('');
+  const [cuit, setCuit] = useState('');
   const [nombre, setNombre] = useState('');
   const [apellido, setApellido] = useState('');
   const [correo, setCorreo] = useState('');
@@ -44,50 +42,45 @@ function Record() {
   const [telefono, setTelefono] = useState('');
   const [direccion, setDireccion] = useState('');
   const [nacimiento, setNacimiento] = useState('');
-  const [error, setError] = useState<string>('');
   const [errors, setErrors] = useState<Partial<Record<FormField, string>>>({});
   const navigate = useNavigate();
-  const [roles, setRoles] = useState<Rol[]>([])
-  const [rolId, setRolId] = useState(0);
-
-  useEffect(() => {
-    const fetchRoles = async () => {
-      try {
-        console.log()
-        const response = await fetchWithAuth(`${API_URL}/rol`)
-        const data = await response.json()
-        setRoles(data)
-      } catch (error) {
-        console.error('Error al cargar roles:', error)
-      }
-    }
-
-    fetchRoles()
-  }, [])
 
   const handleSubmit = async (e: React.SubmitEvent<HTMLFormElement>) => {
     e.preventDefault();
-    setError('');
-    const values: Record<FormField, string | number> = {
+
+    const requiredFields = {
+      razonSocial,
+      cuit,
       nombre,
       apellido,
-      correo,
-      contraseña,
+      email: correo,
+      password: contraseña,
+      fechaNacimiento: nacimiento,
       telefono,
       direccion,
-      nacimiento,
-      rolId,
+    };
+    const fieldNames: Record<keyof typeof requiredFields, FormField> = {
+      razonSocial: 'razonSocial',
+      cuit: 'cuit',
+      nombre: 'nombre',
+      apellido: 'apellido',
+      email: 'correo',
+      password: 'contraseña',
+      fechaNacimiento: 'nacimiento',
+      telefono: 'telefono',
+      direccion: 'direccion',
     };
     const nextErrors: Partial<Record<FormField, string>> = {};
-    for (const field of Object.keys(values) as FormField[]) {
-      const message = validateField(field, values[field]);
-      if (message) nextErrors[field] = message;
+    for (const field of Object.keys(requiredFields) as Array<keyof typeof requiredFields>) {
+      const formField = fieldNames[field];
+      const message = validateField(formField, requiredFields[field]);
+      if (message) nextErrors[formField] = message;
     }
     setErrors(nextErrors);
     if (Object.keys(nextErrors).length > 0) return;
 
     try {
-      await createUsuario({
+      const usuario: Omit<Usuario, 'id'> = {
         nombre,
         apellido,
         email: correo,
@@ -95,13 +88,16 @@ function Record() {
         telefono: telefono,
         direccion,
         fechaNacimiento: nacimiento,
-        rolId: rolId,
-        //organizacion: 1, // Asignar un valor predeterminado para la organización
+        rol: 'Administrador',
+      };
+      await createOrganizacion({
+        razonSocial,
+        cuit,
+        usuario,
       });
       navigate('/');
     } catch (error) {
       console.log(error)
-      setError(error instanceof Error ? error.message : 'Error al registrar el usuario');
     }
   };
 
@@ -109,9 +105,47 @@ function Record() {
     <>
       <div className="container">
         <BackToMenu />
-        <h2 className="title">REGISTRO USUARIO</h2>
+        <h2 className="title">REGISTRO ORGANIZACION</h2>
         <form onSubmit={handleSubmit} noValidate>
           <div className="padre">
+            <div className="razonSocial">
+              <label htmlFor="razonSocial">Razón social:</label>
+              <input
+                type="text"
+                id="razonSocial"
+                name="razonSocial"
+                value={razonSocial}
+                onChange={(e) => {
+                  setRazonSocial(e.target.value);
+                  if (errors.razonSocial) setErrors((current) => ({ ...current, razonSocial: validateField('razonSocial', e.target.value) }));
+                }}
+                onBlur={() => setErrors((current) => ({ ...current, razonSocial: validateField('razonSocial', razonSocial) }))}
+                aria-invalid={Boolean(errors.razonSocial)}
+                aria-describedby="razonSocial-error"
+                placeholder="Ingresa la razón social"
+                required
+              />
+              {errors.razonSocial && <span className="field-error" id="razonSocial-error">{errors.razonSocial}</span>}
+            </div>
+            <div className="cuit">
+              <label htmlFor="cuit">CUIT:</label>
+              <input
+                type="text"
+                id="cuit"
+                name="cuit"
+                value={cuit}
+                onChange={(e) => {
+                  setCuit(e.target.value);
+                  if (errors.cuit) setErrors((current) => ({ ...current, cuit: validateField('cuit', e.target.value) }));
+                }}
+                onBlur={() => setErrors((current) => ({ ...current, cuit: validateField('cuit', cuit) }))}
+                aria-invalid={Boolean(errors.cuit)}
+                aria-describedby="cuit-error"
+                placeholder="Ingresa el CUIT"
+                required
+              />
+              {errors.cuit && <span className="field-error" id="cuit-error">{errors.cuit}</span>}
+            </div>
             <div className="nombre">
               <label htmlFor="nombre">Nombre:</label>
               <input
@@ -245,34 +279,6 @@ function Record() {
               />
               {errors.nacimiento && <span className="field-error" id="nacimiento-error">{errors.nacimiento}</span>}
             </div>
-            <div className="rol">
-              <label htmlFor="rol">Rol:</label>
-              <select
-                id="rol"
-                value={rolId}
-                onChange={(e) => {
-                  const value = Number(e.target.value);
-                  setRolId(value);
-                  if (errors.rolId) setErrors((current) => ({ ...current, rolId: validateField('rolId', value) }));
-                }}
-                onBlur={() => setErrors((current) => ({ ...current, rolId: validateField('rolId', rolId) }))}
-                aria-invalid={Boolean(errors.rolId)}
-                aria-describedby="rol-error"
-                required
-              >
-                <option value={0} disabled>
-                  Seleccioná un rol
-                </option>
-                {roles.map((rol: Rol) => (
-                  <option key={rol.id} value={rol.id}>
-                    {rol.descripcion}
-                  </option>
-                ))}
-              </select>
-              {errors.rolId && <span className="field-error" id="rol-error">{errors.rolId}</span>}
-            </div>
-
-            {error && <p className="form-error" role="alert">{error}</p>}
             <p>
               ¿Ya tienes una cuenta? <Link to="/">Inicia sesión aquí</Link>
             </p>
