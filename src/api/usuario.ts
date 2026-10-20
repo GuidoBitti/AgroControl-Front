@@ -2,7 +2,7 @@ import { fetchWithAuth } from "./fetchWithAuth"
 const API_URL = import.meta.env.VITE_API_URL
 
 export type Usuario = {
-  id: number
+  id?: number
   nombre: string
   apellido: string
   email: string
@@ -10,7 +10,7 @@ export type Usuario = {
   password: string
   fechaNacimiento: string
   direccion: string
-  rolId: number
+  rol: string
   //organizacion: number
 }
 
