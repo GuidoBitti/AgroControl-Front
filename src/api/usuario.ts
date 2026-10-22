@@ -10,11 +10,15 @@ export type Usuario = {
   password: string
   fechaNacimiento: string
   direccion: string
-  rol: string
-  //organizacion: number
+  rol: string | { id: number; descripcion: string }
+  organizacion?: number | { id: number }
 }
 
 type LoginUserFields = Partial<Pick<Usuario, 'id' | 'nombre' | 'apellido' | 'email'>>
+type CreateUsuarioData = Omit<Usuario, 'id' | 'rol' | 'organizacion'> & {
+  rolId: number
+  organizacion: number | { id: number }
+}
 
 export type LoginResponse = {
   token: string
@@ -67,15 +71,33 @@ export async function getUsuarioDesdeLogin(
   return usuario
 }
 
-export async function createUsuario(data: Omit<Usuario, 'id'>): Promise<Usuario> {
+export async function createUsuario(data: CreateUsuarioData): Promise<Usuario> {
   const res = await fetchWithAuth(`${API_URL}/usuarios`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(data),
   })
   if (!res.ok) {
-    const error = await res.json()
-    throw new Error(error.message)
+    const error = await res.json() as { message?: string }
+    throw new Error(error.message ?? 'Error al crear usuario')
+  }
+  return res.json()
+}
+
+export async function updateUsuario(
+  id: number,
+  data: Partial<Pick<Usuario, 'nombre' | 'apellido' | 'email' | 'telefono' | 'fechaNacimiento' | 'direccion'>> & {
+    rol?: { id: number }
+  },
+): Promise<Usuario> {
+  const res = await fetchWithAuth(`${API_URL}/usuarios/${id}`, {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(data),
+  })
+  if (!res.ok) {
+    const error = await res.json() as { message?: string }
+    throw new Error(error.message ?? 'Error al actualizar usuario')
   }
   return res.json()
 }

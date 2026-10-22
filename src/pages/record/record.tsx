@@ -1,7 +1,7 @@
 import { Link, useNavigate } from 'react-router-dom';
 import { useState } from 'react';
 import './record.css';
-import { createUsuario, type Usuario } from '../../api/usuario.ts';
+import { type Usuario } from '../../api/usuario.ts';
 import { createOrganizacion } from '../../api/organiazacion.ts';
 import BackToMenu from '../../components/BackToMenu';
 

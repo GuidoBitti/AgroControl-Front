@@ -1,10 +1,14 @@
 import './menu.css';
 import { Link } from 'react-router-dom';
+import LogoutButton from '../../components/LogoutButton';
 
 function Menu() {
   return (
     <div className="Pagina">
       <div className="container">
+        <div className="page-actions page-actions-end">
+          <LogoutButton />
+        </div>
         <h1 className="title">MENU</h1>
         <div className="padre">
           {/* <Link to="/campania" className="button">
@@ -27,6 +31,9 @@ function Menu() {
           </Link>
           <Link to="/lotes" className="button">
             Ingresar Lotes
+          </Link>
+          <Link to="/usuarios-organizacion" className="button">
+            Usuarios organización
           </Link>
         </div>
       </div>
