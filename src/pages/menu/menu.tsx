@@ -14,9 +14,12 @@ function Menu() {
           {/* <Link to="/campania" className="button">
             Consultar campaña
           </Link> */}
-          {/* <Link to="/trabajo" className="button">
+          <Link to="/trabajo" className="button">
             Asignar trabajo
-          </Link> */}
+          </Link>
+          <Link to="/rol" className="button">
+            Ingresar Rol
+          </Link>
           <Link to="/insumos" className="button">
             Ingresar Insumos
           </Link>
