@@ -5,12 +5,13 @@ import Insumos from './pages/insumos/insumos';
 import SearchInsumos from './pages/search-insumos/searchinsumos';
 import SearchLote from './pages/search-lote/search-lote.tsx';
 import Lotes from './pages/lotes/lotes.tsx';
-import DeleteInsumos from './pages/delete-insumos/deleteinsumos.tsx';
 import Menu from './pages/menu/menu.tsx';
 import ProtectedRoute from './components/ProtectedRoute.tsx';
 import AsignarTrabajo from './pages/trabajo/trabajo.tsx';
 import UsuariosOrganizacion from './pages/usuarios-organizacion/usuarios-organizacion.tsx';
-import Rols from './pages/rol/rol.tsx';
+import Campania from './pages/campania/campania.tsx';
+import CampaniaDetalle from './pages/campania/detalle-campania.tsx';
+import CrearCampania from './pages/campania/crear-campania.tsx';
 
 function App() {
   return (
@@ -25,14 +26,7 @@ function App() {
             </ProtectedRoute>
           }
         />
-        <Route
-          path="/record"
-          element={
-            <ProtectedRoute>
-              <Record />
-            </ProtectedRoute>
-          }
-        />
+        <Route path="/record" element={<Record />} />
         <Route
           path="/insumos"
           element={
@@ -41,14 +35,6 @@ function App() {
             </ProtectedRoute>
           }
         />
-        <Route
-          path="/rol"
-          element={
-            <ProtectedRoute>
-              <Rols />
-            </ProtectedRoute>
-          }
-        ></Route>
         <Route
           path="/search-insumos"
           element={
@@ -74,15 +60,29 @@ function App() {
           }
         />
         <Route
-          path="/delete-insumos"
+          path="/campania"
           element={
             <ProtectedRoute>
-              <DeleteInsumos />
+              <Campania />
             </ProtectedRoute>
           }
         />
-        {/* <Route path="/campania" element={<ProtectedRoute><Campania /></ProtectedRoute>} />
-        <Route path="/campania/:id" element={<ProtectedRoute><CampaniaDetalle /></ProtectedRoute>} /> */}
+        <Route
+          path="/campania/crear"
+          element={
+            <ProtectedRoute>
+              <CrearCampania />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/campania/:id"
+          element={
+            <ProtectedRoute>
+              <CampaniaDetalle />
+            </ProtectedRoute>
+          }
+        />
         <Route
           path="/trabajo"
           element={
