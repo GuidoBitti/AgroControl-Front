@@ -9,6 +9,7 @@ import {
   type Usuario,
 } from '../../api/usuario';
 import './usuarios-organizacion.css';
+import '../../components/RecordCards.css';
 
 type FormValues = {
   nombre: string;
@@ -260,40 +261,45 @@ function UsuariosOrganizacion() {
             {usuarios.length === 0 ? (
               <p>No hay usuarios para mostrar.</p>
             ) : (
-              <div className="usuarios-table-wrapper">
-                <table>
-                  <thead>
-                    <tr>
-                      <th>Nombre</th>
-                      <th>Email</th>
-                      <th>Teléfono</th>
-                      <th>Rol</th>
-                      <th>Acciones</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {usuarios.map((usuario) => (
-                      <tr key={usuario.id}>
-                        <td>{usuario.nombre} {usuario.apellido}</td>
-                        <td>{usuario.email}</td>
-                        <td>{usuario.telefono}</td>
-                        <td>{roleName(usuario.rol)}</td>
-                        <td className="usuarios-row-actions">
-                          <button type="button" onClick={() => editUsuario(usuario)}>Editar</button>
-                          <button
-                            type="button"
-                            className="usuarios-delete"
-                            onClick={() => void handleDelete(usuario)}
-                            disabled={usuario.id === currentUserId}
-                            title={usuario.id === currentUserId ? 'No podés eliminar tu propio usuario.' : undefined}
-                          >
-                            Eliminar
-                          </button>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
+              <div className="record-list" aria-label="Usuarios de la organización">
+                {usuarios.map((usuario) => (
+                  <article className="record-card" key={usuario.id}>
+                    <div className="record-card-content">
+                      <span className="record-card-kicker">Usuario #{usuario.id}</span>
+                      <h3 className="record-card-title">
+                        {usuario.nombre} {usuario.apellido}
+                      </h3>
+                      <div className="record-card-details">
+                        <span className="record-card-detail">
+                          <span className="record-card-detail-label">Email:</span>
+                          {usuario.email}
+                        </span>
+                        <span className="record-card-detail">
+                          <span className="record-card-detail-label">Teléfono:</span>
+                          {usuario.telefono}
+                        </span>
+                        <span className="record-card-detail">
+                          <span className="record-card-detail-label">Rol:</span>
+                          {roleName(usuario.rol)}
+                        </span>
+                      </div>
+                    </div>
+                    <div className="record-card-actions">
+                      <button type="button" onClick={() => editUsuario(usuario)}>
+                        Editar
+                      </button>
+                      <button
+                        type="button"
+                        className="record-card-danger"
+                        onClick={() => void handleDelete(usuario)}
+                        disabled={usuario.id === currentUserId}
+                        title={usuario.id === currentUserId ? 'No podés eliminar tu propio usuario.' : undefined}
+                      >
+                        Eliminar
+                      </button>
+                    </div>
+                  </article>
+                ))}
               </div>
             )}
           </section>

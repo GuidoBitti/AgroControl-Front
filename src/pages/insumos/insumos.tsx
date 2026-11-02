@@ -3,11 +3,10 @@ import { useEffect, useState } from 'react';
 import BackToMenu from '../../components/BackToMenu.js';
 import {
   getInsumo,
-  deleteInsumo,
   createInsumo,
-  updateInsumo,
   type Insumo,
 } from '../../api/insumos.ts';
+import '../../components/RecordCards.css';
 
 type FormValues = {
   nombre: string;
@@ -26,7 +25,6 @@ const emptyForm: FormValues = {
 function Insumos() {
   const [insumos, setInsumos] = useState<Insumo[]>([]);
   const [form, setForm] = useState<FormValues>(emptyForm);
-  const [editingId, setEditingId] = useState<number>();
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState('');
@@ -51,23 +49,6 @@ function Insumos() {
   useEffect(() => {
     void loadInsumos();
   }, []);
-
-  function editInsumo(insumo: Insumo) {
-    setEditingId(insumo.id);
-    setForm({
-      nombre: insumo.nombre,
-      descripcion: insumo.descripcion,
-      stock: String(insumo.stock),
-      tipo: insumo.tipo,
-    });
-    setNotice('');
-    setError('');
-  }
-
-  function resetForm() {
-    setForm(emptyForm);
-    setEditingId(undefined);
-  }
 
   const handleSubmit = async (e: React.SubmitEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -100,14 +81,9 @@ function Insumos() {
 
     setSaving(true);
     try {
-      if (editingId !== undefined) {
-        await updateInsumo(editingId, insumoData);
-        setNotice('Insumo actualizado correctamente.');
-      } else {
-        await createInsumo(insumoData);
-        setNotice('Insumo creado correctamente.');
-      }
-      resetForm();
+      await createInsumo(insumoData);
+      setNotice('Insumo creado correctamente.');
+      setForm(emptyForm);
       await loadInsumos();
     } catch (saveError) {
       console.error(saveError);
@@ -121,28 +97,8 @@ function Insumos() {
     }
   };
 
-  async function handleDelete(insumo: Insumo) {
-    if (!window.confirm(`¿Querés eliminar el insumo "${insumo.nombre}"?`))
-      return;
-
-    setError('');
-    setNotice('');
-    try {
-      await deleteInsumo(insumo.id);
-      setInsumos((current) => current.filter((item) => item.id !== insumo.id));
-      setNotice('Insumo eliminado correctamente.');
-    } catch (deleteError) {
-      console.error(deleteError);
-      setError(
-        deleteError instanceof Error
-          ? deleteError.message
-          : 'No se pudo eliminar el insumo.',
-      );
-    }
-  }
-
   return (
-    <main className="container">
+    <main className="container insumos">
       <BackToMenu />
       <h1 className="title">INSUMOS</h1>
 
@@ -166,9 +122,7 @@ function Insumos() {
           )}
 
           <section className="insumos-form-section">
-            <h2>
-              {editingId === undefined ? 'Agregar insumo' : 'Editar insumo'}
-            </h2>
+            <h2>Agregar nuevo insumo</h2>
             <form onSubmit={handleSubmit}>
               <div className="insumos-form-grid">
                 <label>
@@ -194,7 +148,7 @@ function Insumos() {
                 <label>
                   Tipo
                   <input
-                    type="tipo"
+                    type="text"
                     value={form.tipo}
                     onChange={(event) =>
                       setForm({ ...form, tipo: event.target.value })
@@ -205,7 +159,9 @@ function Insumos() {
                 <label>
                   Stock
                   <input
-                    type="stock"
+                    type="number"
+                    min={0}
+                    step={1}
                     value={form.stock}
                     onChange={(event) =>
                       setForm({ ...form, stock: event.target.value })
@@ -216,22 +172,8 @@ function Insumos() {
               </div>
               <div className="insumos-form-actions">
                 <button type="submit" disabled={saving}>
-                  {saving
-                    ? 'Guardando...'
-                    : editingId === undefined
-                      ? 'Crear insumo'
-                      : 'Guardar cambios'}
+                  {saving ? 'Guardando...' : 'Crear insumo'}
                 </button>
-                {editingId !== undefined && (
-                  <button
-                    type="button"
-                    className="insumos-secondary"
-                    onClick={resetForm}
-                    disabled={saving}
-                  >
-                    Cancelar edición
-                  </button>
-                )}
               </div>
             </form>
           </section>
@@ -241,43 +183,29 @@ function Insumos() {
             {insumos.length === 0 ? (
               <p>No hay insumos para mostrar.</p>
             ) : (
-              <div className="insumos-table-wrapper">
-                <table>
-                  <thead>
-                    <tr>
-                      <th>Nombre</th>
-                      <th>Descripcion</th>
-                      <th>Tipo</th>
-                      <th>Stock</th>
-                      <th>Acciones</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {insumos.map((insumo) => (
-                      <tr key={insumo.id}>
-                        <td>{insumo.nombre}</td>
-                        <td>{insumo.descripcion}</td>
-                        <td>{insumo.tipo}</td>
-                        <td>{insumo.stock}</td>
-                        <td className="insumos-row-actions">
-                          <button
-                            type="button"
-                            onClick={() => editInsumo(insumo)}
-                          >
-                            Editar
-                          </button>
-                          <button
-                            type="button"
-                            className="insumos-delete"
-                            onClick={() => void handleDelete(insumo)}
-                          >
-                            Eliminar
-                          </button>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
+              <div className="record-list" aria-label="Insumos de la organización">
+                {insumos.map((insumo) => (
+                  <article className="record-card" key={insumo.id}>
+                    <div className="record-card-content">
+                      <span className="record-card-kicker">Insumo #{insumo.id}</span>
+                      <h3 className="record-card-title">{insumo.nombre}</h3>
+                      <div className="record-card-details">
+                        <span className="record-card-detail">
+                          <span className="record-card-detail-label">Tipo:</span>
+                          {insumo.tipo}
+                        </span>
+                        <span className="record-card-detail">
+                          <span className="record-card-detail-label">Stock:</span>
+                          {insumo.stock}
+                        </span>
+                        <span className="record-card-detail">
+                          <span className="record-card-detail-label">Descripción:</span>
+                          {insumo.descripcion}
+                        </span>
+                      </div>
+                    </div>
+                  </article>
+                ))}
               </div>
             )}
           </section>

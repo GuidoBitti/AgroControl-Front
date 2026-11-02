@@ -120,7 +120,7 @@ function AsignarTrabajo() {
                 </option>
                 {lotes.map((lote) => (
                   <option key={lote.id} value={lote.id}>
-                    Lote #{lote.id}: {lote.tipo} - {lote.descripcion}
+                    {lote.descripcion} - {lote.numero}
                   </option>
                 ))}
               </select>

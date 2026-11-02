@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { getCampania, type Campania } from '../../api/campania';
+import '../../components/RecordCards.css';
+import './campania.css';
 
 function CampaniaDetalle() {
   const { id } = useParams();
@@ -25,7 +27,7 @@ function CampaniaDetalle() {
   if (!campania) return <p>Campaña no encontrada.</p>;
 
   return (
-    <div className="container">
+    <div className="container campania-detalle">
       <h2 className="title">DETALLE DE CAMPAÑA</h2>
 
       <p>
@@ -42,21 +44,26 @@ function CampaniaDetalle() {
       {campania.LoteCampanias.length === 0 ? (
         <p>Esta campaña no tiene lotes asignados.</p>
       ) : (
-        <table>
-          <thead>
-            <tr>
-              <th>Lote</th>
-              <th>Cultivo</th>
-            </tr>
-          </thead>
-          <tbody>
-            {campania.LoteCampanias.map((lc) => (
-              <tr key={lc.id}>
-                <td>{lc.Lote.Cultivo?.nombre ?? 'Sin cultivo'}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+        <section className="record-list" aria-label="Lotes de la campaña">
+          {campania.LoteCampanias.map((lc) => (
+            <article className="record-card" key={lc.id}>
+              <div className="record-card-content">
+                <span className="record-card-kicker">
+                  ID {lc.Lote.id}
+                </span>
+                <h3 className="record-card-title">
+                  {lc.Lote.descripcion} - {lc.Lote.numero}
+                </h3>
+                <div className="record-card-details">
+                  <span className="record-card-detail">
+                    <span className="record-card-detail-label">Cultivo:</span>
+                    {lc.Lote.Cultivo?.nombre ?? 'Sin cultivo'}
+                  </span>
+                </div>
+              </div>
+            </article>
+          ))}
+        </section>
       )}
     </div>
   );
