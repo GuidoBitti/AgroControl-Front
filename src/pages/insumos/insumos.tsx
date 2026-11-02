@@ -1,6 +1,8 @@
 import './insumos.css';
 import { useEffect, useState } from 'react';
 import BackToMenu from '../../components/BackToMenu.js';
+import { getRol, type Rol } from '../../api/rol';
+import { getUsuario, type Usuario } from '../../api/usuario.ts';
 import {
   getInsumo,
   deleteInsumo,
@@ -23,7 +25,20 @@ const emptyForm: FormValues = {
   descripcion: '',
 };
 
+function relationId(value: Usuario['organizacion']): number | undefined {
+  if (typeof value === 'number') return value;
+  return value?.id;
+}
+
+function roleName(value: Usuario['rol']): string {
+  return typeof value === 'string' ? value : value.descripcion;
+}
+
 function Insumos() {
+  const [_usuarios, setUsuarios] = useState<Usuario[]>([]);
+  const [_roles, setRoles] = useState<Rol[]>([]);
+  const [_organizacionId, setOrganizacionId] = useState<number>();
+  const [_currentUserId, setCurrentUserId] = useState<number>();
   const [insumos, setInsumos] = useState<Insumo[]>([]);
   const [form, setForm] = useState<FormValues>(emptyForm);
   const [editingId, setEditingId] = useState<number>();
@@ -31,6 +46,7 @@ function Insumos() {
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState('');
   const [notice, setNotice] = useState('');
+  const [isAdmin, setIsAdmin] = useState(false);
 
   async function loadInsumos() {
     try {
@@ -47,9 +63,49 @@ function Insumos() {
       setLoading(false);
     }
   }
+  async function loadData() {
+    try {
+      const userId = Number(localStorage.getItem('userId'));
+      if (!Number.isInteger(userId) || userId <= 0) {
+        throw new Error('No se pudo identificar al usuario autenticado.');
+      }
+      const [allUsers, allRoles] = await Promise.all([getUsuario(), getRol()]);
+      const currentUser = allUsers.find((usuario) => usuario.id === userId);
+      if (!currentUser)
+        throw new Error('No se encontraron los datos del usuario autenticado.');
+
+      const orgId = relationId(currentUser.organizacion);
+      if (!orgId)
+        throw new Error('No se pudo identificar la organización del usuario.');
+
+      setCurrentUserId(userId);
+      setOrganizacionId(orgId);
+      setIsAdmin(
+        ['administrador', 'admin', 'ingeniero', 'ing'].includes(
+          roleName(currentUser.rol).trim().toLowerCase(),
+        ),
+      );
+      setUsuarios(
+        allUsers.filter(
+          (usuario) => relationId(usuario.organizacion) === orgId,
+        ),
+      );
+      setRoles(allRoles);
+    } catch (loadError) {
+      console.error(loadError);
+      setError(
+        loadError instanceof Error
+          ? loadError.message
+          : 'No se pudieron cargar los usuarios.',
+      );
+    } finally {
+      setLoading(false);
+    }
+  }
 
   useEffect(() => {
     void loadInsumos();
+    void loadData();
   }, []);
 
   function editInsumo(insumo: Insumo) {
@@ -152,7 +208,13 @@ function Insumos() {
           {error}
         </p>
       )}
-      {!loading && !error && (
+      {!loading && !error && !isAdmin && (
+        <p className="usuarios-feedback usuarios-error" role="alert">
+          Solo el administrador o un ingeniero puede gestionar los insumos de la
+          organización.
+        </p>
+      )}
+      {!loading && !error && isAdmin && (
         <>
           {notice && (
             <p className="insumos-feedback insumos-success" role="status">

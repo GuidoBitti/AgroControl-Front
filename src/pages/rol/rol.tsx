@@ -19,10 +19,10 @@ const emptyForm: FormValues = {
 };
 
 function Rols() {
-  const [currentUserId, setCurrentUserId] = useState<number | null>(null);
-  const [organizacionId, setOrganizacionId] = useState<number | null>(null);
+  const [_currentUserId, setCurrentUserId] = useState<number | null>(null);
+  const [_organizacionId, setOrganizacionId] = useState<number | null>(null);
   const [isAdmin, setIsAdmin] = useState(false);
-  const [usuarios, setUsuarios] = useState<Usuario[]>([]);
+  const [_usuarios, setUsuarios] = useState<Usuario[]>([]);
   const [Rols, setRols] = useState<Rol[]>([]);
   const [form, setForm] = useState<FormValues>(emptyForm);
   const [editingId, setEditingId] = useState<number>();
