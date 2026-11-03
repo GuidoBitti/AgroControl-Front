@@ -35,10 +35,13 @@
 
 .search-insumos-actions {
   justify-content: flex-start;
+  flex-wrap: wrap;
 }
 
 .search-insumos-quantity {
   display: flex;
+  flex: 1 1 12rem;
+  flex-wrap: wrap;
   align-items: center;
   gap: 8px;
   margin: 0;
@@ -46,7 +49,9 @@
 }
 
 .search-insumos-quantity input {
+  flex: 0 1 5rem;
   width: 64px;
+  min-width: 0;
   padding: 6px;
   border: 1px solid #a5d6a7;
   border-radius: 6px;
@@ -55,4 +60,14 @@
 .search-insumos-actions button:disabled {
   cursor: not-allowed;
   opacity: 0.6;
+}
+
+@media (max-width: 639px) {
+  .search-insumos-actions {
+    align-items: stretch;
+  }
+
+  .search-insumos-actions button {
+    flex: 1 1 8rem;
+  }
 }

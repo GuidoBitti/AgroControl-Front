@@ -7,10 +7,12 @@
 
 .record-card {
   display: flex;
-  align-items: center;
+  align-items: stretch;
+  flex-direction: column;
   justify-content: space-between;
-  gap: 20px;
-  padding: 18px 20px;
+  gap: 14px;
+  min-width: 0;
+  padding: 16px;
   background: #fff;
   border: 1px solid #dce8dc;
   border-left: 5px solid #2e7d32;
@@ -65,6 +67,7 @@
   flex-wrap: wrap;
   align-items: center;
   gap: 8px;
+  min-width: 0;
 }
 
 .container .record-card-actions button {
@@ -88,13 +91,26 @@
 }
 
 @media (max-width: 560px) {
-  .record-card {
-    align-items: stretch;
-    flex-direction: column;
-    gap: 14px;
-  }
-
   .record-card-actions {
     align-items: stretch;
+  }
+
+  .container .record-card-actions button {
+    flex: 1 1 8rem;
+  }
+}
+
+@media (min-width: 640px) {
+  .record-card {
+    align-items: center;
+    flex-direction: row;
+    gap: 20px;
+    padding: 18px 20px;
+  }
+}
+
+@media (min-width: 1024px) {
+  .record-card {
+    padding: 20px 24px;
   }
 }

@@ -103,7 +103,7 @@ function Record() {
 
   return (
     <>
-      <div className="container">
+      <div className="container narrow-container">
         <BackToMenu />
         <h2 className="title">REGISTRO ORGANIZACION</h2>
         <form onSubmit={handleSubmit} noValidate>

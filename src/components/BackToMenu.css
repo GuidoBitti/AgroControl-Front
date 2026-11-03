@@ -9,6 +9,8 @@
   font-family: 'Segoe UI', Arial, sans-serif;
   font-weight: 600;
   text-decoration: none;
+  max-width: 100%;
+  flex-wrap: wrap;
 }
 
 .back-to-menu:hover {
