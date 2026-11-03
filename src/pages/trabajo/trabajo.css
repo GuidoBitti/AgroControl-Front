@@ -19,8 +19,7 @@
   font-family: 'Segoe UI', Arial, sans-serif;
 }
 
-.trabajos-form-section,
-.trabajos-list-section {
+.trabajos-form-section {
   margin-top: 28px;
   font-family: 'Segoe UI', Arial, sans-serif;
   color: #1b5e20;
@@ -50,55 +49,13 @@
   font: inherit;
 }
 
-.trabajos-form-actions,
-.trabajos-row-actions {
+.trabajos-form-actions {
   display: flex;
   gap: 8px;
 }
 
-.trabajos-form-actions button,
-.trabajos-row-actions button {
+.trabajos-form-actions button {
   width: auto;
-}
-
-.trabajos-form-actions .trabajos-secondary {
-  color: #1b5e20;
-  background: #e8f5e9;
-}
-
-.trabajos-table-wrapper {
-  overflow-x: auto;
-}
-
-.trabajos table {
-  width: 100%;
-  border-collapse: collapse;
-  font-family: 'Segoe UI', Arial, sans-serif;
-}
-
-.trabajos th,
-.trabajos td {
-  padding: 12px 10px;
-  border-bottom: 1px solid #dce8dc;
-  text-align: left;
-}
-
-.trabajos th {
-  color: #1b5e20;
-}
-
-.trabajos-row-actions .trabajos-delete {
-  color: #fff;
-  background: #b42318;
-}
-
-.trabajos-row-actions .trabajos-delete:hover {
-  background: #8f1c13;
-}
-
-.trabajos-row-actions .trabajos-delete:disabled {
-  cursor: not-allowed;
-  opacity: 0.55;
 }
 
 .trabajos-feedback {
@@ -121,8 +78,7 @@
     grid-template-columns: 1fr;
   }
 
-  .trabajos-form-actions,
-  .trabajos-row-actions {
+  .trabajos-form-actions {
     flex-wrap: wrap;
   }
 }

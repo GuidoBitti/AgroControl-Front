@@ -7,26 +7,74 @@
   font-family: 'Segoe UI', Arial, sans-serif;
 }
 
-.resultados-titulo {
-  margin: 0 0 16px;
-  font-size: 1.2rem;
-  color: #2e7d32;
+.search-trabajo-edit {
+  margin: 28px 0;
+  color: #1b5e20;
+  font-family: 'Segoe UI', Arial, sans-serif;
 }
 
-.search-trabajos-feedback {
+.search-trabajo-edit h2 {
+  margin: 0 0 16px;
+}
+
+.search-trabajo-edit-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.search-trabajo-edit-grid label {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.search-trabajo-edit-grid input,
+.search-trabajo-edit-grid select {
+  width: 100%;
+  min-height: 42px;
+  padding: 9px 12px;
+  border: 1px solid #a5d6a7;
+  border-radius: 8px;
+  box-sizing: border-box;
+  font: inherit;
+}
+
+.search-trabajo-edit-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 16px;
+}
+
+.search-trabajo-edit-actions button {
+  width: auto;
+}
+
+.search-trabajo-secondary {
+  color: #1b5e20;
+  background: #e8f5e9;
+}
+
+.search-trabajo-results-title {
+  margin: 0 0 16px;
+  color: #1b5e20;
+  font-family: 'Segoe UI', Arial, sans-serif;
+}
+
+.search-trabajo-feedback {
   margin: 16px 0;
   padding: 12px 14px;
   border-radius: 8px;
   font-family: 'Segoe UI', Arial, sans-serif;
 }
 
-.search-trabajos-error {
+.search-trabajo-error {
   color: #8f1c13;
   background: #fef3f2;
   border: 1px solid #f3b4ae;
 }
 
-.search-trabajos-success {
+.search-trabajo-success {
   color: #1b5e20;
   background: #e8f5e9;
   border: 1px solid #a5d6a7;
@@ -54,4 +102,14 @@
 .search-trabajos-actions button:disabled {
   cursor: not-allowed;
   opacity: 0.6;
+}
+
+@media (max-width: 640px) {
+  .search-trabajo-edit-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .search-trabajo-edit-actions {
+    flex-wrap: wrap;
+  }
 }

@@ -3,25 +3,19 @@ import { useEffect, useState } from 'react';
 import BackToMenu from '../../components/BackToMenu.js';
 import { getRol, type Rol } from '../../api/rol';
 import { getUsuario, type Usuario } from '../../api/usuario.ts';
-import {
-  getInsumo,
-  createInsumo,
-  updateInsumo,
-  deleteInsumo,
-  type Insumo,
-} from '../../api/insumos.ts';
-import '../../components/RecordCards.css';
+import { createInsumo } from '../../api/insumos.ts';
+import { getTiposInsumo, type TipoInsumo } from '../../api/tipo-insumo.ts';
 
 type FormValues = {
   nombre: string;
-  tipo: string;
+  tipoInsumoId: string;
   stock: string;
   descripcion: string;
 };
 
 const emptyForm: FormValues = {
   nombre: '',
-  tipo: '',
+  tipoInsumoId: '',
   stock: '',
   descripcion: '',
 };
@@ -40,42 +34,25 @@ function Insumos() {
   const [_roles, setRoles] = useState<Rol[]>([]);
   const [_organizacionId, setOrganizacionId] = useState<number>();
   const [_currentUserId, setCurrentUserId] = useState<number>();
-  const [_insumos, setInsumos] = useState<Insumo[]>([]);
+  const [tiposInsumo, setTiposInsumo] = useState<TipoInsumo[]>([]);
   const [form, setForm] = useState<FormValues>(emptyForm);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState('');
   const [notice, setNotice] = useState('');
   const [isAdmin, setIsAdmin] = useState(false);
-  const [savingId, setSavingId] = useState<number | null>(null);
-  const [resultados, setResultados] = useState<Insumo[]>([]);
-  const [cantidades, setCantidades] = useState<Record<number, string>>({});
-  const [_buscado, setBuscado] = useState(false);
 
-  async function loadInsumos() {
-    try {
-      const data = await getInsumo();
-      setInsumos(data);
-      setResultados(data);
-      setBuscado(true);
-    } catch (loadError) {
-      console.error(loadError);
-      setError(
-        loadError instanceof Error
-          ? loadError.message
-          : 'No se pudieron cargar los insumos',
-      );
-    } finally {
-      setLoading(false);
-    }
-  }
   async function loadData() {
     try {
       const userId = Number(localStorage.getItem('userId'));
       if (!Number.isInteger(userId) || userId <= 0) {
         throw new Error('No se pudo identificar al usuario autenticado.');
       }
-      const [allUsers, allRoles] = await Promise.all([getUsuario(), getRol()]);
+      const [allUsers, allRoles, allTiposInsumo] = await Promise.all([
+        getUsuario(),
+        getRol(),
+        getTiposInsumo(),
+      ]);
       const currentUser = allUsers.find((usuario) => usuario.id === userId);
       if (!currentUser)
         throw new Error('No se encontraron los datos del usuario autenticado.');
@@ -97,6 +74,7 @@ function Insumos() {
         ),
       );
       setRoles(allRoles);
+      setTiposInsumo(allTiposInsumo);
     } catch (loadError) {
       console.error(loadError);
       setError(
@@ -110,7 +88,6 @@ function Insumos() {
   }
 
   useEffect(() => {
-    void loadInsumos();
     void loadData();
   }, []);
 
@@ -120,7 +97,12 @@ function Insumos() {
     setNotice('');
 
     if (
-      ![form.nombre, form.tipo, form.stock, form.descripcion].every((value) =>
+      ![
+        form.nombre,
+        form.tipoInsumoId,
+        form.stock,
+        form.descripcion,
+      ].every((value) =>
         value.trim(),
       )
     ) {
@@ -138,7 +120,7 @@ function Insumos() {
 
     const insumoData = {
       nombre: form.nombre.trim(),
-      tipo: form.tipo.trim(),
+      tipoInsumoId: Number(form.tipoInsumoId),
       stock: stockNumber,
       descripcion: form.descripcion.trim(),
     };
@@ -148,7 +130,6 @@ function Insumos() {
       await createInsumo(insumoData);
       setNotice('Insumo creado correctamente.');
       setForm(emptyForm);
-      await loadInsumos();
     } catch (saveError) {
       console.error(saveError);
       setError(
@@ -158,75 +139,6 @@ function Insumos() {
       );
     } finally {
       setSaving(false);
-    }
-  };
-
-  const handleEliminar = async (insumo: Insumo) => {
-    if (
-      !window.confirm(
-        `¿Seguro que querés eliminar el insumo "${insumo.nombre}"?`,
-      )
-    ) {
-      return;
-    }
-
-    setSavingId(insumo.id);
-    setError('');
-    setNotice('');
-    try {
-      await deleteInsumo(insumo.id);
-      setInsumos((current) => current.filter((item) => item.id !== insumo.id));
-      setResultados((current) =>
-        current.filter((item) => item.id !== insumo.id),
-      );
-      setNotice(`Se eliminó "${insumo.nombre}".`);
-    } catch (deleteError) {
-      console.error(deleteError);
-      setError(
-        deleteError instanceof Error
-          ? deleteError.message
-          : 'No se pudo eliminar el insumo.',
-      );
-    } finally {
-      setSavingId(null);
-    }
-  };
-
-  const handleAgregarStock = async (insumo: Insumo) => {
-    const cantidad = Number(cantidades[insumo.id] ?? '1');
-    if (!Number.isInteger(cantidad) || cantidad <= 0) {
-      setError('Ingresá una cantidad entera mayor que cero.');
-      setNotice('');
-      return;
-    }
-
-    setSavingId(insumo.id);
-    setError('');
-    setNotice('');
-    try {
-      const actualizado = await updateInsumo(insumo.id, {
-        nombre: insumo.nombre,
-        tipo: insumo.tipo,
-        descripcion: insumo.descripcion,
-        stock: insumo.stock + cantidad,
-      });
-      setInsumos((current) =>
-        current.map((item) => (item.id === insumo.id ? actualizado : item)),
-      );
-      setResultados((current) =>
-        current.map((item) => (item.id === insumo.id ? actualizado : item)),
-      );
-      setNotice(`Se agregaron ${cantidad} unidades a "${insumo.nombre}".`);
-      setCantidades((current) => ({ ...current, [insumo.id]: '1' }));
-    } catch (saveError) {
-      console.error(saveError);
-      setError(
-        saveError instanceof Error
-          ? saveError.message
-          : 'No se pudo actualizar el stock.',
-      );
-    } finally {
-      setSavingId(null);
     }
   };
 
@@ -286,14 +198,24 @@ function Insumos() {
                 </label>
                 <label>
                   Tipo
-                  <input
-                    type="text"
-                    value={form.tipo}
+                  <select
+                    value={form.tipoInsumoId}
                     onChange={(event) =>
-                      setForm({ ...form, tipo: event.target.value })
+                      setForm({ ...form, tipoInsumoId: event.target.value })
                     }
                     required
-                  />
+                  >
+                    <option value="" disabled>
+                      {tiposInsumo.length > 0
+                        ? 'Seleccioná un tipo'
+                        : 'No hay tipos disponibles'}
+                    </option>
+                    {tiposInsumo.map((tipoInsumo) => (
+                      <option key={tipoInsumo.id} value={tipoInsumo.id}>
+                        {tipoInsumo.nombre}
+                      </option>
+                    ))}
+                  </select>
                 </label>
                 <label>
                   Stock
@@ -310,83 +232,14 @@ function Insumos() {
                 </label>
               </div>
               <div className="insumos-form-actions">
-                <button type="submit" disabled={saving}>
+                <button
+                  type="submit"
+                  disabled={saving || tiposInsumo.length === 0}
+                >
                   {saving ? 'Guardando...' : 'Crear insumo'}
                 </button>
               </div>
             </form>
-          </section>
-
-          <section className="search-insumos-results">
-            <h2 className="resultados-titulo">Resultados de la búsqueda:</h2>
-            {resultados.length === 0 ? (
-              <p>No se encontraron insumos.</p>
-            ) : (
-              <div className="record-list" aria-label="Resultados de insumos">
-                {resultados.map((i) => (
-                  <article className="record-card" key={i.id}>
-                    <div className="record-card-content">
-                      <span className="record-card-kicker">Insumo #{i.id}</span>
-                      <h3 className="record-card-title">{i.nombre}</h3>
-                      <div className="record-card-details">
-                        <span className="record-card-detail">
-                          <span className="record-card-detail-label">
-                            Tipo:
-                          </span>
-                          {i.tipo}
-                        </span>
-                        <span className="record-card-detail">
-                          <span className="record-card-detail-label">
-                            Stock:
-                          </span>
-                          {i.stock}
-                        </span>
-                        <span className="record-card-detail">
-                          <span className="record-card-detail-label">
-                            Descripción:
-                          </span>
-                          {i.descripcion}
-                        </span>
-                      </div>
-                    </div>
-                    <div className="record-card-actions search-insumos-actions">
-                      <label className="search-insumos-quantity">
-                        Agregar unidades
-                        <input
-                          type="number"
-                          min={1}
-                          step={1}
-                          value={cantidades[i.id] ?? '1'}
-                          onChange={(event) =>
-                            setCantidades((current) => ({
-                              ...current,
-                              [i.id]: event.target.value,
-                            }))
-                          }
-                          aria-label={`Unidades a agregar a ${i.nombre}`}
-                        />
-                      </label>
-                      <button
-                        type="button"
-                        className="search-insumos-add"
-                        disabled={savingId !== null}
-                        onClick={() => void handleAgregarStock(i)}
-                      >
-                        {savingId === i.id ? 'Guardando...' : 'Agregar stock'}
-                      </button>
-                      <button
-                        type="button"
-                        className="record-card-danger"
-                        disabled={savingId !== null}
-                        onClick={() => void handleEliminar(i)}
-                      >
-                        Eliminar
-                      </button>
-                    </div>
-                  </article>
-                ))}
-              </div>
-            )}
           </section>
         </>
       )}

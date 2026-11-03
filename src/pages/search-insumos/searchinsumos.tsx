@@ -1,7 +1,14 @@
 import { Link } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import './searchinsumos.css';
-import { getInsumo, type Insumo } from '../../api/insumos';
+import {
+  getInsumo,
+  getTipoInsumoNombre,
+  getTipoInsumoId,
+  updateInsumo,
+  deleteInsumo,
+  type Insumo,
+} from '../../api/insumos';
 import BackToMenu from '../../components/BackToMenu.js';
 import '../../components/RecordCards.css';
 
@@ -13,6 +20,8 @@ function SearchInsumos() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [notice, setNotice] = useState('');
+  const [savingId, setSavingId] = useState<number | null>(null);
+  const [cantidades, setCantidades] = useState<Record<number, string>>({});
 
   useEffect(() => {
     async function cargarInsumos() {
@@ -44,7 +53,7 @@ function SearchInsumos() {
         insumo.id.toString().includes(busqueda) ||
         insumo.nombre.toLowerCase().includes(busqueda) ||
         insumo.descripcion.toLowerCase().includes(busqueda) ||
-        insumo.tipo.toLowerCase().includes(busqueda),
+        getTipoInsumoNombre(insumo).toLowerCase().includes(busqueda),
     );
   };
 
@@ -59,6 +68,77 @@ function SearchInsumos() {
 
   const handleLimpiar = () => {
     setNombre('');
+    setResultados(insumos);
+    setBuscado(true);
+  };
+
+  const handleAgregarStock = async (insumo: Insumo) => {
+    const cantidad = Number(cantidades[insumo.id] ?? '1');
+    if (!Number.isInteger(cantidad) || cantidad <= 0) {
+      setError('Ingresá una cantidad entera mayor que cero.');
+      setNotice('');
+      return;
+    }
+
+    setSavingId(insumo.id);
+    setError('');
+    setNotice('');
+    try {
+      const actualizado = await updateInsumo(insumo.id, {
+        nombre: insumo.nombre,
+        tipoInsumoId: getTipoInsumoId(insumo),
+        descripcion: insumo.descripcion,
+        stock: insumo.stock + cantidad,
+      });
+      setInsumos((current) =>
+        current.map((item) => (item.id === insumo.id ? actualizado : item)),
+      );
+      setResultados((current) =>
+        current.map((item) => (item.id === insumo.id ? actualizado : item)),
+      );
+      setNotice(`Se agregaron ${cantidad} unidades a "${insumo.nombre}".`);
+      setCantidades((current) => ({ ...current, [insumo.id]: '1' }));
+    } catch (saveError) {
+      console.error(saveError);
+      setError(
+        saveError instanceof Error
+          ? saveError.message
+          : 'No se pudo actualizar el stock.',
+      );
+    } finally {
+      setSavingId(null);
+    }
+  };
+
+  const handleEliminar = async (insumo: Insumo) => {
+    if (
+      !window.confirm(
+        `¿Seguro que querés eliminar el insumo "${insumo.nombre}"?`,
+      )
+    ) {
+      return;
+    }
+
+    setSavingId(insumo.id);
+    setError('');
+    setNotice('');
+    try {
+      await deleteInsumo(insumo.id);
+      setInsumos((current) => current.filter((item) => item.id !== insumo.id));
+      setResultados((current) =>
+        current.filter((item) => item.id !== insumo.id),
+      );
+      setNotice(`Se eliminó "${insumo.nombre}".`);
+    } catch (deleteError) {
+      console.error(deleteError);
+      setError(
+        deleteError instanceof Error
+          ? deleteError.message
+          : 'No se pudo eliminar el insumo.',
+      );
+    } finally {
+      setSavingId(null);
+    }
   };
 
   return (
@@ -113,7 +193,7 @@ function SearchInsumos() {
                 className="record-list"
                 aria-label="Insumos de la organización"
               >
-                {insumos.map((insumo) => (
+                {resultados.map((insumo) => (
                   <article className="record-card" key={insumo.id}>
                     <div className="record-card-content">
                       <span className="record-card-kicker">
@@ -125,7 +205,7 @@ function SearchInsumos() {
                           <span className="record-card-detail-label">
                             Tipo:
                           </span>
-                          {insumo.tipo}
+                          {getTipoInsumoNombre(insumo)}
                         </span>
                         <span className="record-card-detail">
                           <span className="record-card-detail-label">
@@ -140,6 +220,39 @@ function SearchInsumos() {
                           {insumo.descripcion}
                         </span>
                       </div>
+                    </div>
+                    <div className="record-card-actions search-insumos-actions">
+                      <label className="search-insumos-quantity">
+                        Agregar unidades
+                        <input
+                          type="number"
+                          min={1}
+                          step={1}
+                          value={cantidades[insumo.id] ?? '1'}
+                          onChange={(event) =>
+                            setCantidades((current) => ({
+                              ...current,
+                              [insumo.id]: event.target.value,
+                            }))
+                          }
+                          aria-label={`Unidades a agregar a ${insumo.nombre}`}
+                        />
+                      </label>
+                      <button
+                        type="button"
+                        disabled={savingId !== null}
+                        onClick={() => void handleAgregarStock(insumo)}
+                      >
+                        {savingId === insumo.id ? 'Guardando...' : 'Agregar stock'}
+                      </button>
+                      <button
+                        type="button"
+                        className="record-card-danger"
+                        disabled={savingId !== null}
+                        onClick={() => void handleEliminar(insumo)}
+                      >
+                        Eliminar
+                      </button>
                     </div>
                   </article>
                 ))}
