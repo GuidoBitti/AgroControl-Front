@@ -47,7 +47,8 @@ function SearchTrabajos() {
         trabajo.fechaFin.includes(busqueda) ||
         trabajo.cantidadInsumo.toString().includes(busqueda) ||
         String(getInsumoId(trabajo) ?? '').includes(busqueda) ||
-        String(getLoteId(trabajo) ?? '').includes(busqueda),
+        String(getLoteId(trabajo) ?? '').includes(busqueda) ||
+        String(getUsuarioId(trabajo) ?? '').includes(busqueda),
     );
   };
 
@@ -60,15 +61,22 @@ function SearchTrabajos() {
     setBuscado(true);
   };
 
+  const handleLimpiar = () => {
+    setNombre('');
+  };
+
   const getInsumoId = (t: Trabajo): number | undefined =>
     typeof t.insumo === 'object' ? t.insumo.id : t.insumo;
 
   const getLoteId = (t: Trabajo): number | undefined =>
     typeof t.lote === 'object' ? t.lote.id : t.lote;
 
+  const getUsuarioId = (t: Trabajo): number | undefined =>
+    typeof t.usuario === 'object' ? t.usuario.id : t.usuario;
+
   return (
     <div className="Pagina">
-      <div className="container search-trabajo-page">
+      <div className="container">
         <BackToMenu />
         <h1 className="title">BÚSQUEDA DE TRABAJOS</h1>
         <form onSubmit={handleSubmit}>
@@ -81,10 +89,13 @@ function SearchTrabajos() {
             />
             <p>
               ¿Desea agregar un nuevo trabajo?{' '}
-              <Link to="/trabajos">Agregar Trabajo</Link>
+              <Link to="/trabajo">Agregar Trabajo</Link>
             </p>
             <button type="submit" className="button" disabled={loading}>
               {loading ? 'Cargando trabajos...' : 'Buscar'}
+            </button>
+            <button type="button" className="button" onClick={handleLimpiar}>
+              Limpiar
             </button>
           </div>
         </form>
@@ -107,7 +118,7 @@ function SearchTrabajos() {
         {loading && <p role="status">Cargando trabajos...</p>}
         {buscado && (
           <section className="search-trabajo-results">
-            <h2 className="resultados-titulo">Resultados de la búsqueda:</h2>
+            <h2 className="trabajos-list-section">Trabajos encontrados:</h2>
             {resultados.length === 0 ? (
               <p>No se encontraron trabajos.</p>
             ) : (
@@ -149,6 +160,12 @@ function SearchTrabajos() {
                             Lote:
                           </span>
                           {getLoteId(i) ?? 'N/A'}
+                        </span>
+                        <span className="record-card-detail">
+                          <span className="record-card-detail-label">
+                            Usuario:
+                          </span>
+                          {getUsuarioId(i) ?? 'N/A'}
                         </span>
                         <span className="record-card-detail">
                           <span className="record-card-detail-label">

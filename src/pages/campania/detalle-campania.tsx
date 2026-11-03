@@ -48,9 +48,7 @@ function CampaniaDetalle() {
           {campania.LoteCampanias.map((lc) => (
             <article className="record-card" key={lc.id}>
               <div className="record-card-content">
-                <span className="record-card-kicker">
-                  ID {lc.Lote.id}
-                </span>
+                <span className="record-card-kicker">ID {lc.Lote.id}</span>
                 <h3 className="record-card-title">
                   {lc.Lote.descripcion} - {lc.Lote.numero}
                 </h3>

@@ -6,6 +6,8 @@ import { getUsuario, type Usuario } from '../../api/usuario.ts';
 import {
   getInsumo,
   createInsumo,
+  updateInsumo,
+  deleteInsumo,
   type Insumo,
 } from '../../api/insumos.ts';
 import '../../components/RecordCards.css';
@@ -38,18 +40,24 @@ function Insumos() {
   const [_roles, setRoles] = useState<Rol[]>([]);
   const [_organizacionId, setOrganizacionId] = useState<number>();
   const [_currentUserId, setCurrentUserId] = useState<number>();
-  const [insumos, setInsumos] = useState<Insumo[]>([]);
+  const [_insumos, setInsumos] = useState<Insumo[]>([]);
   const [form, setForm] = useState<FormValues>(emptyForm);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState('');
   const [notice, setNotice] = useState('');
   const [isAdmin, setIsAdmin] = useState(false);
+  const [savingId, setSavingId] = useState<number | null>(null);
+  const [resultados, setResultados] = useState<Insumo[]>([]);
+  const [cantidades, setCantidades] = useState<Record<number, string>>({});
+  const [_buscado, setBuscado] = useState(false);
 
   async function loadInsumos() {
     try {
       const data = await getInsumo();
       setInsumos(data);
+      setResultados(data);
+      setBuscado(true);
     } catch (loadError) {
       console.error(loadError);
       setError(
@@ -153,8 +161,77 @@ function Insumos() {
     }
   };
 
+  const handleEliminar = async (insumo: Insumo) => {
+    if (
+      !window.confirm(
+        `¿Seguro que querés eliminar el insumo "${insumo.nombre}"?`,
+      )
+    ) {
+      return;
+    }
+
+    setSavingId(insumo.id);
+    setError('');
+    setNotice('');
+    try {
+      await deleteInsumo(insumo.id);
+      setInsumos((current) => current.filter((item) => item.id !== insumo.id));
+      setResultados((current) =>
+        current.filter((item) => item.id !== insumo.id),
+      );
+      setNotice(`Se eliminó "${insumo.nombre}".`);
+    } catch (deleteError) {
+      console.error(deleteError);
+      setError(
+        deleteError instanceof Error
+          ? deleteError.message
+          : 'No se pudo eliminar el insumo.',
+      );
+    } finally {
+      setSavingId(null);
+    }
+  };
+
+  const handleAgregarStock = async (insumo: Insumo) => {
+    const cantidad = Number(cantidades[insumo.id] ?? '1');
+    if (!Number.isInteger(cantidad) || cantidad <= 0) {
+      setError('Ingresá una cantidad entera mayor que cero.');
+      setNotice('');
+      return;
+    }
+
+    setSavingId(insumo.id);
+    setError('');
+    setNotice('');
+    try {
+      const actualizado = await updateInsumo(insumo.id, {
+        nombre: insumo.nombre,
+        tipo: insumo.tipo,
+        descripcion: insumo.descripcion,
+        stock: insumo.stock + cantidad,
+      });
+      setInsumos((current) =>
+        current.map((item) => (item.id === insumo.id ? actualizado : item)),
+      );
+      setResultados((current) =>
+        current.map((item) => (item.id === insumo.id ? actualizado : item)),
+      );
+      setNotice(`Se agregaron ${cantidad} unidades a "${insumo.nombre}".`);
+      setCantidades((current) => ({ ...current, [insumo.id]: '1' }));
+    } catch (saveError) {
+      console.error(saveError);
+      setError(
+        saveError instanceof Error
+          ? saveError.message
+          : 'No se pudo actualizar el stock.',
+      );
+    } finally {
+      setSavingId(null);
+    }
+  };
+
   return (
-    <main className="container insumos">
+    <div className="container ">
       <BackToMenu />
       <h1 className="title">INSUMOS</h1>
 
@@ -240,31 +317,71 @@ function Insumos() {
             </form>
           </section>
 
-          <section className="insumos-list-section">
-            <h2>Insumos de la organización</h2>
-            {insumos.length === 0 ? (
-              <p>No hay insumos para mostrar.</p>
+          <section className="search-insumos-results">
+            <h2 className="resultados-titulo">Resultados de la búsqueda:</h2>
+            {resultados.length === 0 ? (
+              <p>No se encontraron insumos.</p>
             ) : (
-              <div className="record-list" aria-label="Insumos de la organización">
-                {insumos.map((insumo) => (
-                  <article className="record-card" key={insumo.id}>
+              <div className="record-list" aria-label="Resultados de insumos">
+                {resultados.map((i) => (
+                  <article className="record-card" key={i.id}>
                     <div className="record-card-content">
-                      <span className="record-card-kicker">Insumo #{insumo.id}</span>
-                      <h3 className="record-card-title">{insumo.nombre}</h3>
+                      <span className="record-card-kicker">Insumo #{i.id}</span>
+                      <h3 className="record-card-title">{i.nombre}</h3>
                       <div className="record-card-details">
                         <span className="record-card-detail">
-                          <span className="record-card-detail-label">Tipo:</span>
-                          {insumo.tipo}
+                          <span className="record-card-detail-label">
+                            Tipo:
+                          </span>
+                          {i.tipo}
                         </span>
                         <span className="record-card-detail">
-                          <span className="record-card-detail-label">Stock:</span>
-                          {insumo.stock}
+                          <span className="record-card-detail-label">
+                            Stock:
+                          </span>
+                          {i.stock}
                         </span>
                         <span className="record-card-detail">
-                          <span className="record-card-detail-label">Descripción:</span>
-                          {insumo.descripcion}
+                          <span className="record-card-detail-label">
+                            Descripción:
+                          </span>
+                          {i.descripcion}
                         </span>
                       </div>
+                    </div>
+                    <div className="record-card-actions search-insumos-actions">
+                      <label className="search-insumos-quantity">
+                        Agregar unidades
+                        <input
+                          type="number"
+                          min={1}
+                          step={1}
+                          value={cantidades[i.id] ?? '1'}
+                          onChange={(event) =>
+                            setCantidades((current) => ({
+                              ...current,
+                              [i.id]: event.target.value,
+                            }))
+                          }
+                          aria-label={`Unidades a agregar a ${i.nombre}`}
+                        />
+                      </label>
+                      <button
+                        type="button"
+                        className="search-insumos-add"
+                        disabled={savingId !== null}
+                        onClick={() => void handleAgregarStock(i)}
+                      >
+                        {savingId === i.id ? 'Guardando...' : 'Agregar stock'}
+                      </button>
+                      <button
+                        type="button"
+                        className="record-card-danger"
+                        disabled={savingId !== null}
+                        onClick={() => void handleEliminar(i)}
+                      >
+                        Eliminar
+                      </button>
                     </div>
                   </article>
                 ))}
@@ -273,7 +390,7 @@ function Insumos() {
           </section>
         </>
       )}
-    </main>
+    </div>
   );
 }
 

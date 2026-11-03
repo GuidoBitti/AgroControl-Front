@@ -29,10 +29,10 @@ function Menu() {
             <p>Administrá el inventario de insumos de tu organización.</p>
             <div className="menu-group-links">
               <Link to="/insumos" className="menu-link">
-                Ingresar insumos
+                Ingresar y gestionar insumos
               </Link>
               <Link to="/search-insumos" className="menu-link">
-                Buscar y gestionar insumos
+                Buscar insumos
               </Link>
             </div>
           </section>
@@ -55,7 +55,7 @@ function Menu() {
             <p>Busca o asigna trabajos a los lotes de la organización.</p>
             <div className="menu-group-links">
               <Link to="/trabajo" className="menu-link">
-                Asignar trabajo
+                Asignar y gestionar trabajos
               </Link>
               <Link to="/search-trabajo" className="menu-link">
                 Buscar trabajos

@@ -83,6 +83,8 @@
   .insumos-form-grid {
     grid-template-columns: 1fr;
   }
-
-  .insumos-form-actions,
 }
+
+  .insumos-form-actions {
+    flex-direction: column;
+  } 
