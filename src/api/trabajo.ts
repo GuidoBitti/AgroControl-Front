@@ -7,8 +7,11 @@ export type Trabajo = {
   descripcion: string
   fechaInicio: string
   fechaFin: string
-  Lote: number
-  Usuario: number
+  cantidadInsumo: number
+  lote?: number | {id:number}
+  usuario?: number | {id:number}
+  organizacion?: number | {id: number}
+  insumo?: number | {id: number}
 }
 
 export async function getTrabajo(): Promise<Trabajo[]> {
@@ -24,6 +27,22 @@ export async function createTrabajo(data: Omit<Trabajo, 'id'>): Promise<Trabajo>
     body: JSON.stringify(data),
   })
   if (!res.ok) throw new Error('Error al crear trabajo')
+  return res.json()
+}
+
+export async function updateTrabajo(
+  id: number,
+  data: Partial<Pick<Trabajo, 'descripcion' | 'fechaInicio' | 'fechaFin' | 'usuario' | 'insumo' | 'lote' | 'cantidadInsumo' | 'organizacion'>>,
+): Promise<Trabajo> {
+  const res = await fetchWithAuth(`${API_URL}/trabajo/${id}`, {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(data),
+  })
+  if (!res.ok) {
+    const error = await res.json() as { message?: string }
+    throw new Error(error.message ?? 'Error al actualizar trabajo')
+  }
   return res.json()
 }
 

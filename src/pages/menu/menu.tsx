@@ -9,35 +9,69 @@ function Menu() {
         <div className="page-actions page-actions-end">
           <LogoutButton />
         </div>
-        <h1 className="title">MENU</h1>
-        <div className="padre">
-          {/* <Link to="/campania" className="button">
-            Consultar campaña
-          </Link> */}
-          <Link to="/trabajo" className="button">
-            Asignar trabajo
-          </Link>
-          <Link to="/rol" className="button">
-            Ingresar Rol
-          </Link>
-          <Link to="/insumos" className="button">
-            Ingresar Insumos
-          </Link>
-          <Link to="/search-insumos" className="button">
-            Buscar Insumos
-          </Link>
-          <Link to="/delete-insumos" className="button">
-            Eliminar Insumos
-          </Link>
-          <Link to="/search-lote" className="button">
-            Buscar Lotes
-          </Link>
-          <Link to="/lotes" className="button">
-            Ingresar Lotes
-          </Link>
-          <Link to="/usuarios-organizacion" className="button">
-            Usuarios organización
-          </Link>
+        <h1 className="title">MENÚ PRINCIPAL</h1>
+        <div className="menu-groups">
+          <section className="menu-group">
+            <h2>Campañas</h2>
+            <p>Organizá las campañas y consultá las que están en curso.</p>
+            <div className="menu-group-links">
+              <Link to="/campania/crear" className="menu-link">
+                Crear campaña
+              </Link>
+              <Link to="/campania" className="menu-link">
+                Buscar campañas
+              </Link>
+            </div>
+          </section>
+
+          <section className="menu-group">
+            <h2>Insumos</h2>
+            <p>Administrá el inventario de insumos de tu organización.</p>
+            <div className="menu-group-links">
+              <Link to="/insumos" className="menu-link">
+                Ingresar insumos
+              </Link>
+              <Link to="/search-insumos" className="menu-link">
+                Buscar y gestionar insumos
+              </Link>
+            </div>
+          </section>
+
+          <section className="menu-group">
+            <h2>Lotes</h2>
+            <p>Consultá los lotes existentes o ingresá uno nuevo.</p>
+            <div className="menu-group-links">
+              <Link to="/lotes" className="menu-link">
+                Ingresar lotes
+              </Link>
+              <Link to="/search-lote" className="menu-link">
+                Buscar lotes
+              </Link>
+            </div>
+          </section>
+
+          <section className="menu-group">
+            <h2>Trabajos</h2>
+            <p>Busca o asigna trabajos a los lotes de la organización.</p>
+            <div className="menu-group-links">
+              <Link to="/trabajo" className="menu-link">
+                Asignar trabajo
+              </Link>
+              <Link to="/search-trabajo" className="menu-link">
+                Buscar trabajos
+              </Link>
+            </div>
+          </section>
+
+          <section className="menu-group">
+            <h2>Organización</h2>
+            <p>Gestioná los usuarios que pertenecen a tu organización.</p>
+            <div className="menu-group-links">
+              <Link to="/usuarios-organizacion" className="menu-link">
+                Usuarios de la organización
+              </Link>
+            </div>
+          </section>
         </div>
       </div>
     </div>

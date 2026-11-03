@@ -10,19 +10,30 @@ export type LoteCampania = {
   Campania: Campania
 }
 
+export type CreateLoteCampaniaData = {
+  loteId: number
+  campaniaId: number
+}
+
 export async function getLoteCampania(): Promise<LoteCampania[]> {
   const res = await fetchWithAuth(`${API_URL}/lote-campania`)
   if (!res.ok) throw new Error('Error al obtener los lotes de campaña')
   return res.json()
 }
 
-export async function createLoteCampania(data: Omit<LoteCampania, 'id'>): Promise<LoteCampania> {
+export async function createLoteCampania(data: CreateLoteCampaniaData): Promise<LoteCampania> {
   const res = await fetchWithAuth(`${API_URL}/lote-campania`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(data),
   })
-  if (!res.ok) throw new Error('Error al crear el lote de campaña')
+  if (!res.ok) {
+    if (res.status === 409) {
+      throw new Error('Esta campaña ya está asignada a ese lote.')
+    }
+
+    throw new Error(`No se pudo asignar la campaña al lote (HTTP ${res.status}).`)
+  }
   return res.json()
 }
 

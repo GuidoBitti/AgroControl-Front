@@ -3,8 +3,9 @@ import { fetchWithAuth } from './fetchWithAuth.ts';
 const API_URL = import.meta.env.VITE_API_URL
 
 export type Rol = {
-  id?: number
+  id: number
   descripcion: string
+  organizacion?: number
 }
 
 export async function getRol(): Promise<Rol[]> {
@@ -25,9 +26,7 @@ export async function createRol(data: Omit<Rol, 'id'>): Promise<Rol> {
 
 export async function updateRol(
   id: number,
-  data: Partial<Pick<Rol, 'descripcion'>> & {
-    rol?: { id: number }
-  },
+  data: Partial<Pick<Rol, 'descripcion'>> ,
 ): Promise<Rol> {
   const res = await fetchWithAuth(`${API_URL}/rols/${id}`, {
     method: 'PUT',

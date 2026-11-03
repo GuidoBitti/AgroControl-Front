@@ -8,7 +8,7 @@ import {
   updateRol,
   type Rol,
 } from '../../api/rol';
-import './rol.css';
+import './trabajo.css';
 
 type FormValues = {
   descripcion: string;

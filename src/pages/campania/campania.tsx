@@ -1,53 +1,104 @@
-import { useState, type FormEvent } from 'react';
-import { Link } from 'react-router-dom';
+import { useEffect, useState, type FormEvent } from 'react';
 import { getCampanias, type Campania } from '../../api/campania';
+import { getUsuario, type Usuario } from '../../api/usuario';
 import BackToMenu from '../../components/BackToMenu.js';
+import '../../components/RecordCards.css';
+
+function relationId(
+  value: number | { id: number } | null | undefined,
+): number | undefined {
+  if (typeof value === 'number') return value;
+  return value?.id;
+}
+
+function campaniaBelongsToOrganization(
+  campania: Campania,
+  organizacionId: number,
+): boolean {
+  const organizaciones = Array.isArray(campania.organizacion)
+    ? campania.organizacion
+    : [campania.organizacion];
+
+  return organizaciones.some(
+    (organizacion) => relationId(organizacion) === organizacionId,
+  );
+}
 
 function BuscarCampania() {
   const [id, setId] = useState('');
   const [fechaInicio, setFechaInicio] = useState('');
   const [fechaFin, setFechaFin] = useState('');
+  const [campanias, setCampanias] = useState<Campania[]>([]);
   const [resultados, setResultados] = useState<Campania[]>([]);
-  const [buscado, setBuscado] = useState(false);
+  const [cargando, setCargando] = useState(true);
   const [error, setError] = useState('');
 
   const dia = (fecha: string) => fecha.slice(0, 10);
 
-  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
+  useEffect(() => {
+    async function loadCampanias() {
+      try {
+        const userId = Number(localStorage.getItem('userId'));
+        if (!Number.isInteger(userId) || userId <= 0) {
+          throw new Error('Iniciá sesión nuevamente para identificar al usuario.');
+        }
+
+        const usuarios: Usuario[] = await getUsuario();
+        const usuarioActual = usuarios.find((usuario) => usuario.id === userId);
+        const organizacionId = usuarioActual
+          ? relationId(usuarioActual.organizacion)
+          : undefined;
+        if (!organizacionId) {
+          throw new Error('No se pudo identificar la organización del usuario.');
+        }
+
+        const todasLasCampanias = await getCampanias();
+        const campaniasOrganizacion = todasLasCampanias.filter((campania) =>
+          campaniaBelongsToOrganization(campania, organizacionId),
+        );
+        setCampanias(campaniasOrganizacion);
+        setResultados(campaniasOrganizacion);
+      } catch (loadError) {
+        console.error(loadError);
+        setError(
+          loadError instanceof Error
+            ? loadError.message
+            : 'No se pudieron cargar las campañas de la organización.',
+        );
+      } finally {
+        setCargando(false);
+      }
+    }
+
+    void loadCampanias();
+  }, []);
+
+  const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setError('');
 
-    try {
-      const campanias = await getCampanias();
-
-      setResultados(
-        campanias.filter((c) => {
-          if (id && c.id !== Number(id)) return false;
-          if (fechaInicio && dia(c.fechaInicio) < fechaInicio) return false;
-          if (fechaFin && dia(c.fechaFin) > fechaFin) return false;
-          return true;
-        }),
-      );
-      setBuscado(true);
-    } catch (err) {
-      console.error(err);
-      setError('No se pudo realizar la búsqueda');
-    }
+    setResultados(
+      campanias.filter((c) => {
+        if (id && c.id !== Number(id)) return false;
+        if (fechaInicio && dia(c.fechaInicio) < fechaInicio) return false;
+        if (fechaFin && dia(c.fechaFin) > fechaFin) return false;
+        return true;
+      }),
+    );
   };
 
   const handleLimpiar = () => {
     setId('');
     setFechaInicio('');
     setFechaFin('');
-    setResultados([]);
-    setBuscado(false);
+    setResultados(campanias);
   };
 
   return (
     <div className="Pagina">
       <div className="container">
         <BackToMenu />
-        <h2 className="title">BUSCAR CAMPAÑAS</h2>
+        <h2 className="title">CAMPAÑAS DE MI ORGANIZACIÓN</h2>
         <form onSubmit={handleSubmit}>
           <div className="padre">
             <div>
@@ -90,35 +141,34 @@ function BuscarCampania() {
           </button>
         </form>
 
-        {buscado && resultados.length === 0 && (
+        {cargando && <p role="status">Cargando campañas...</p>}
+        {!cargando && !error && resultados.length === 0 && (
           <p>No se encontraron campañas.</p>
         )}
 
-        {resultados.length > 0 && (
-          <table>
-            <thead>
-              <tr>
-                <th>ID</th>
-                <th>Inicio</th>
-                <th>Fin</th>
-                <th></th>
-              </tr>
-            </thead>
-            <tbody>
-              {resultados.map((c) => (
-                <tr key={c.id}>
-                  <td>{c.id}</td>
-                  <td>{dia(c.fechaInicio)}</td>
-                  <td>{dia(c.fechaFin)}</td>
-                  <td>
-                    <Link to={`/campania/${c.id}`} className="button">
-                      Ver detalle
-                    </Link>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+        {!cargando && resultados.length > 0 && (
+          <section className="record-list" aria-label="Campañas de la organización">
+            {resultados.map((campania) => (
+              <article className="record-card" key={campania.id}>
+                <div className="record-card-content">
+                  <span className="record-card-kicker">
+                    Campaña #{campania.id}
+                  </span>
+                  <h3 className="record-card-title">{campania.descripcion}</h3>
+                  <div className="record-card-details">
+                    <span className="record-card-detail">
+                      <span className="record-card-detail-label">Inicio:</span>
+                      {dia(campania.fechaInicio)}
+                    </span>
+                    <span className="record-card-detail">
+                      <span className="record-card-detail-label">Fin:</span>
+                      {dia(campania.fechaFin)}
+                    </span>
+                  </div>
+                </div>
+              </article>
+            ))}
+          </section>
         )}
       </div>
     </div>

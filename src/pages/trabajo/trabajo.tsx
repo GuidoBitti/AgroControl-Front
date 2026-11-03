@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react';
 import BackToMenu from '../../components/BackToMenu';
 import { getInsumo, type Insumo } from '../../api/insumos';
-import { getLoteCampania, type LoteCampania } from '../../api/lote-campania';
 import { getLote, type Lote } from '../../api/lote.ts';
 import { getCampanias, type Campania } from '../../api/campania.ts';
 import { getUsuario, type Usuario } from '../../api/usuario';
@@ -19,18 +18,20 @@ type FormValues = {
   descripcion: string;
   fechaInicio: string;
   fechaFin: string;
-  loteCampaniaId: string;
+  loteId: string;
   insumoId: string;
   usuarioId: string;
+  cantidadInsumo: number;
 };
 
 const emptyForm: FormValues = {
   descripcion: '',
   fechaInicio: '',
   fechaFin: '',
-  loteCampaniaId: '',
+  loteId: '',
   insumoId: '',
   usuarioId: '',
+  cantidadInsumo: 0,
 };
 
 function relationId(
@@ -52,15 +53,19 @@ function Trabajos() {
   const [trabajos, setTrabajos] = useState<Trabajo[]>([]);
   const [insumos, setInsumos] = useState<Insumo[]>([]);
   const [isAdmin, setIsAdmin] = useState(false);
-  const [lotesCampania, setLotesCampania] = useState<LoteCampania[]>([]);
   const [lotes, setLotes] = useState<Lote[]>([]);
-  const [campanias, setCampanias] = useState<Campania[]>([]);
+  const [_campanias, setCampanias] = useState<Campania[]>([]);
   const [form, setForm] = useState<FormValues>(emptyForm);
   const [editingId, setEditingId] = useState<number>();
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState('');
   const [notice, setNotice] = useState('');
+
+  const loteNumero = (lote: Trabajo['lote']): string => {
+    if (lote === undefined || lote === null) return '-';
+    return String(typeof lote === 'number' ? lote : lote.id);
+  };
 
   function usuarioNombre(value: Trabajo['usuario']): string {
     const usuario = usuarios.find((item) => item.id === relationId(value));
@@ -70,23 +75,6 @@ function Trabajos() {
   function insumoNombre(value: Trabajo['insumo']): string {
     const insumo = insumos.find((item) => item.id === relationId(value));
     return insumo ? insumo.nombre : '';
-  }
-
-  function nombreLoteCampania(loteCampania: LoteCampania): string {
-    const lote = lotes.find(
-      (item) => item.id === relationId(loteCampania.lote),
-    );
-    const campania = campanias.find(
-      (item) => item.id === relationId(loteCampania.campania),
-    );
-    return `${lote?.id ?? ''} · ${campania?.id ?? ''}`;
-  }
-
-  function loteCampaniaNombre(value: Trabajo['loteCampania']): string {
-    const loteCampania = lotesCampania.find(
-      (item) => item.id === relationId(value),
-    );
-    return loteCampania ? nombreLoteCampania(loteCampania) : '';
   }
 
   async function loadUsuario() {
@@ -135,21 +123,14 @@ function Trabajos() {
       if (!Number.isInteger(userId) || userId <= 0) {
         throw new Error('No se pudo identificar al usuario autenticado.');
       }
-      const [
-        allUsers,
-        allTrabajos,
-        allInsumos,
-        allLotesCampania,
-        allLotes,
-        allCampanias,
-      ] = await Promise.all([
-        getUsuario(),
-        getTrabajo(),
-        getInsumo(),
-        getLoteCampania(),
-        getLote(),
-        getCampanias(),
-      ]);
+      const [allUsers, allTrabajos, allInsumos, allLotes, allCampanias] =
+        await Promise.all([
+          getUsuario(),
+          getTrabajo(),
+          getInsumo(),
+          getLote(),
+          getCampanias(),
+        ]);
       const currentUser = allUsers.find((usuario) => usuario.id === userId);
       if (!currentUser)
         throw new Error('No se encontraron los datos del usuario autenticado.');
@@ -170,7 +151,6 @@ function Trabajos() {
         ),
       );
       setInsumos(allInsumos);
-      setLotesCampania(allLotesCampania);
       setLotes(allLotes);
       setCampanias(allCampanias);
     } catch (loadError) {
@@ -202,9 +182,10 @@ function Trabajos() {
       descripcion: trabajo.descripcion,
       fechaInicio: trabajo.fechaInicio.slice(0, 10),
       fechaFin: trabajo.fechaFin.slice(0, 10),
-      loteCampaniaId: String(relationId(trabajo.loteCampania) ?? ''),
+      loteId: String(relationId(trabajo.lote) ?? ''),
       insumoId: String(relationId(trabajo.insumo) ?? ''),
       usuarioId: String(relationId(trabajo.usuario) ?? ''),
+      cantidadInsumo: trabajo.cantidadInsumo,
     });
     setNotice('');
     setError('');
@@ -217,11 +198,16 @@ function Trabajos() {
     setError('');
     setNotice('');
 
-    const loteCampaniaSeleccionada = Number(form.loteCampaniaId);
+    const loteSeleccionado = Number(form.loteId);
     const insumoSeleccionado = Number(form.insumoId);
     const usuarioSeleccionado = Number(form.usuarioId);
+    console.log({
+      lote: form.loteId,
+      insumo: form.insumoId,
+      usuario: form.usuarioId,
+    });
     if (
-      [loteCampaniaSeleccionada, insumoSeleccionado, usuarioSeleccionado].some(
+      [loteSeleccionado, insumoSeleccionado, usuarioSeleccionado].some(
         (id) => !Number.isInteger(id) || id <= 0,
       )
     ) {
@@ -235,15 +221,21 @@ function Trabajos() {
       setError('La fecha de fin no puede ser anterior a la fecha de inicio.');
       return;
     }
+    if (!(form.cantidadInsumo > 0)) {
+      setSaving(false);
+      setError('La cantidad de insumo debe ser mayor a 0.');
+      return;
+    }
 
     try {
       const trabajoData = {
         descripcion: form.descripcion.trim(),
         fechaInicio: form.fechaInicio,
         fechaFin: form.fechaFin,
-        loteCampania: loteCampaniaSeleccionada,
+        lote: loteSeleccionado,
         insumo: insumoSeleccionado,
         usuario: usuarioSeleccionado,
+        cantidadInsumo: form.cantidadInsumo,
       };
       if (editingId !== undefined) {
         await updateTrabajo(editingId, trabajoData);
@@ -356,23 +348,6 @@ function Trabajos() {
                   />
                 </label>
                 <label>
-                  Lote y campaña
-                  <select
-                    value={form.loteCampaniaId}
-                    onChange={(event) =>
-                      setForm({ ...form, loteCampaniaId: event.target.value })
-                    }
-                    required
-                  >
-                    <option value="">Seleccionar lote y campaña</option>
-                    {lotesCampania.map((loteCampania) => (
-                      <option key={loteCampania.id} value={loteCampania.id}>
-                        {nombreLoteCampania(loteCampania)}
-                      </option>
-                    ))}
-                  </select>
-                </label>
-                <label>
                   Insumo
                   <select
                     value={form.insumoId}
@@ -384,6 +359,41 @@ function Trabajos() {
                     {insumos.map((insumo) => (
                       <option key={insumo.id} value={insumo.id}>
                         {insumo.nombre}
+                      </option>
+                    ))}
+                  </select>
+                </label>
+                <label>
+                  Cantidad de insumo
+                  <input
+                    type="number"
+                    min="1"
+                    value={form.cantidadInsumo}
+                    onChange={(e) =>
+                      setForm({
+                        ...form,
+                        cantidadInsumo: Number(e.target.value),
+                      })
+                    }
+                    required
+                  />
+                </label>
+                <label>
+                  Lote
+                  <select
+                    id="lote"
+                    value={form.loteId}
+                    onChange={(e) =>
+                      setForm({ ...form, loteId: e.target.value })
+                    }
+                    required
+                  >
+                    <option value="" disabled>
+                      Seleccioná un lote
+                    </option>
+                    {lotes.map((lote) => (
+                      <option key={lote.id} value={lote.id}>
+                        {lote.descripcion} - {lote.numero}
                       </option>
                     ))}
                   </select>
@@ -440,7 +450,7 @@ function Trabajos() {
                       <th>Descripción</th>
                       <th>Inicio</th>
                       <th>Fin</th>
-                      <th>Lote y campaña</th>
+                      <th>Lote</th>
                       <th>Insumo</th>
                       <th>Usuario</th>
                       <th>Acciones</th>
@@ -452,7 +462,7 @@ function Trabajos() {
                         <td>{trabajo.descripcion}</td>
                         <td>{trabajo.fechaInicio.slice(0, 10)}</td>
                         <td>{trabajo.fechaFin.slice(0, 10)}</td>
-                        <td>{loteCampaniaNombre(trabajo.loteCampania)}</td>
+                        <td>{loteNumero(trabajo.lote)}</td>
                         <td>{insumoNombre(trabajo.insumo)}</td>
                         <td>{usuarioNombre(trabajo.usuario)}</td>
                         <td className="trabajos-row-actions">

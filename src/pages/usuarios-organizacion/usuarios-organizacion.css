@@ -37,55 +37,18 @@
   font: inherit;
 }
 
-.usuarios-form-actions,
-.usuarios-row-actions {
+.usuarios-form-actions {
   display: flex;
   gap: 8px;
 }
 
-.usuarios-form-actions button,
-.usuarios-row-actions button {
+.usuarios-form-actions button {
   width: auto;
 }
 
 .usuarios-form-actions .usuarios-secondary {
   color: #1b5e20;
   background: #e8f5e9;
-}
-
-.usuarios-table-wrapper {
-  overflow-x: auto;
-}
-
-.usuarios-organizacion table {
-  width: 100%;
-  border-collapse: collapse;
-  font-family: 'Segoe UI', Arial, sans-serif;
-}
-
-.usuarios-organizacion th,
-.usuarios-organizacion td {
-  padding: 12px 10px;
-  border-bottom: 1px solid #dce8dc;
-  text-align: left;
-}
-
-.usuarios-organizacion th {
-  color: #1b5e20;
-}
-
-.usuarios-row-actions .usuarios-delete {
-  color: #fff;
-  background: #b42318;
-}
-
-.usuarios-row-actions .usuarios-delete:hover {
-  background: #8f1c13;
-}
-
-.usuarios-row-actions .usuarios-delete:disabled {
-  cursor: not-allowed;
-  opacity: 0.55;
 }
 
 .usuarios-feedback {
@@ -108,8 +71,7 @@
     grid-template-columns: 1fr;
   }
 
-  .usuarios-form-actions,
-  .usuarios-row-actions {
+  .usuarios-form-actions {
     flex-wrap: wrap;
   }
 }
