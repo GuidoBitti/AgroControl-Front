@@ -57,6 +57,7 @@
 
 .logout-dialog-actions {
   display: flex;
+  flex-wrap: wrap;
   justify-content: flex-end;
   gap: 10px;
   margin-top: 20px;
@@ -70,4 +71,18 @@
 .logout-dialog-actions .logout-cancel {
   color: #1b5e20;
   background: #e8f5e9;
+}
+
+@media (max-width: 639px) {
+  .logout-dialog-backdrop {
+    padding: 12px;
+  }
+
+  .logout-dialog {
+    padding: 20px;
+  }
+
+  .logout-dialog-actions button {
+    flex: 1 1 8rem;
+  }
 }

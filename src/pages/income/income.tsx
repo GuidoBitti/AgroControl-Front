@@ -32,7 +32,7 @@ function Income() {
 
   return (
     <>
-      <div className="container">
+      <div className="container narrow-container">
         <h2 className="title">INGRESO DE USUARIOS</h2>
         <form onSubmit={handleSubmit}>
           <div className="padre">
