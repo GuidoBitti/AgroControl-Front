@@ -14,6 +14,31 @@ export type Trabajo = {
   insumo?: number | {id: number}
 }
 
+async function throwTrabajoError(
+  res: Response,
+  fallbackMessage: string,
+): Promise<never> {
+  const responseBody = await res.text()
+  if (responseBody) {
+    let errorBody: unknown
+    try {
+      errorBody = JSON.parse(responseBody)
+    } catch {
+      errorBody = undefined
+    }
+
+    if (
+      typeof errorBody === 'object' &&
+      errorBody !== null &&
+      'message' in errorBody &&
+      typeof errorBody.message === 'string'
+    ) {
+      throw new Error(errorBody.message)
+    }
+  }
+  throw new Error(`${fallbackMessage} (HTTP ${res.status})`)
+}
+
 export async function getTrabajo(): Promise<Trabajo[]> {
   const res = await fetchWithAuth(`${API_URL}/trabajo`)
   if (!res.ok) throw new Error('Error al obtener trabajos')
@@ -26,7 +51,7 @@ export async function createTrabajo(data: Omit<Trabajo, 'id'>): Promise<Trabajo>
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(data),
   })
-  if (!res.ok) throw new Error('Error al crear trabajo')
+  if (!res.ok) await throwTrabajoError(res, 'Error al crear trabajo')
   return res.json()
 }
 
@@ -39,10 +64,7 @@ export async function updateTrabajo(
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(data),
   })
-  if (!res.ok) {
-    const error = await res.json() as { message?: string }
-    throw new Error(error.message ?? 'Error al actualizar trabajo')
-  }
+  if (!res.ok) await throwTrabajoError(res, 'Error al actualizar trabajo')
   return res.json()
 }
 

@@ -1,13 +1,34 @@
 import { fetchWithAuth } from './fetchWithAuth';
+import type { TipoInsumo } from './tipo-insumo.ts';
+
 const API_URL = import.meta.env.VITE_API_URL
 
 export type Insumo = {
   id: number
   nombre: string
   stock: number
-  tipo: string
+  tipoInsumo: number | TipoInsumo
   descripcion: string
   organizacion?: number
+}
+
+export type CreateInsumoData = {
+  nombre: string
+  stock: number
+  tipoInsumoId: number
+  descripcion: string
+}
+
+export function getTipoInsumoId(insumo: Insumo): number {
+  return typeof insumo.tipoInsumo === 'number'
+    ? insumo.tipoInsumo
+    : insumo.tipoInsumo.id
+}
+
+export function getTipoInsumoNombre(insumo: Insumo): string {
+  return typeof insumo.tipoInsumo === 'number'
+    ? String(insumo.tipoInsumo)
+    : insumo.tipoInsumo.nombre
 }
 
 export async function getInsumo(): Promise<Insumo[]> {
@@ -16,10 +37,7 @@ export async function getInsumo(): Promise<Insumo[]> {
   return res.json()
 }
 
-export type CreateInsumoData = Omit<Insumo, 'id' | 'organizacion'>;
-
-
-export async function createInsumo(data: Omit<Insumo, 'id'>): Promise<Insumo> {
+export async function createInsumo(data: CreateInsumoData): Promise<Insumo> {
   const res = await fetchWithAuth(`${API_URL}/insumos`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
@@ -29,7 +47,10 @@ export async function createInsumo(data: Omit<Insumo, 'id'>): Promise<Insumo> {
   return res.json()
 }
 
-export async function updateInsumo(id: number, data: CreateInsumoData): Promise<Insumo> {
+export async function updateInsumo(
+  id: number,
+  data: Partial<CreateInsumoData>,
+): Promise<Insumo> {
   const res = await fetchWithAuth(`${API_URL}/insumos/${id}`, {
     method: 'PUT',
     headers: { 'Content-Type': 'application/json' },

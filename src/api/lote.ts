@@ -11,6 +11,7 @@ export type Lote = {
   hectareas: number
   descripcion: string
   Cultivo?: Cultivo
+  organizacion?: number | { id: number }
 }
 
 export type CreateLoteData = Pick<
@@ -32,10 +33,7 @@ export async function createLote(data: CreateLoteData): Promise<Lote> {
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({
-        ...data,
-        tipo: '',
-      }),
+      body: JSON.stringify(data),
     }
   );
 
