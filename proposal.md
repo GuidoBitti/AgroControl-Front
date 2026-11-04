@@ -33,7 +33,7 @@ Regularidad:
 |Req|Detalle|
 |:-|:-|
 |CRUD simple|1. CRUD Cultivo<br>2. CRUD Insumo<br>3. CRUD Rol<br>4. CRUD Usuario<br>5. CRUD Lote|
-|CRUD dependiente|1. CRUD Usuario {depende de} CRUD Rol|
+|CRUD dependiente|1. CRUD Usuario {depende de} CRUD Rol<br>2. CRUD Trabajo {depende de} CRUD Inusmo|
 |Listado<br>+<br>detalle|1. Listado de Lotes. Muestra identificador, tipo de cultivo, cantidad de hectáreas, latitud, longitud y descripción => Detalle CRUD Lote<br>2. Listado de Insumos. Muestra nombre, tipo, cantidad disponible, unidad de medida y descripción => Detalle CRUD Insumo|
 |CUU/Epic|1. Gestión de usuarios y roles. Permite registrar usuarios y asignarles un rol dentro del sistema.|
 
